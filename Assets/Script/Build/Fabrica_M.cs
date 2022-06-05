@@ -38,7 +38,7 @@ public class Fabrica_M : Build
         {
             if (select) 
             { 
-                UIManager.Instance.BuildBar.value = 0;
+                UIManager.Instance.buildBar.value = 0;
                 UIManager.Instance.BuildBarText.text = "";
             }
         }
@@ -67,7 +67,7 @@ public class Fabrica_M : Build
                 if (kran.transform.localPosition.x > 3.4f) { left = true; }
             }
 
-            if (select) { UIManager.Instance.BuildBar.value = (p.ConstructTime - timer) / p.ConstructTime * 100; }
+            if (select) { UIManager.Instance.buildBar.value = (p.ConstructTime - timer) / p.ConstructTime * 100; }
             timer -= Time.deltaTime;
             if (timer <= 1)
             {

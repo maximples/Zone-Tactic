@@ -34,30 +34,41 @@ public class Laboratory : Build
         {
             if (select)
             {
-                UIManager.Instance.BuildBar.value = 0;
+                UIManager.Instance.buildBar.value = 0;
                 UIManager.Instance.BuildBarText.text = "";
             }
         }
         if (p == null && ProductQueue.Count > 0)
         {
+
             p = ProductQueue.Dequeue();
-            UIManager.Instance.BuildBarText.text = "В очереди " + ProductQueue.Count;
             timer = p.ConstructTime;
         }
         if (p != null)
         {
  
-            if (select) { UIManager.Instance.BuildBar.value = (p.ConstructTime - timer) / p.ConstructTime * 100; }
+            if (select) { UIManager.Instance.buildBar.value = (p.ConstructTime - timer) / p.ConstructTime * 100; }
             timer -= Time.deltaTime;
             if (timer <= 0)
             {
+                if(p.Name== "Системы защиты") { GameStat.player1Technology.towerMulti = true; }
+                if (p.Name == "Ракетные технологии") { GameStat.player1Technology.RSZO = true; }
+                if (p.Name == "Тяжёлая промышленость") { GameStat.player1Technology.heavyFactory = true; }
+                if (p.Name == "Тяжёлый танк") { GameStat.player1Technology.heavyTank = true; }
                 p = null;
             }
         }
     }
     public void BuildProduct(int ID)
     {
-        ProductQueue.Enqueue(products[ID]);
-        UIManager.Instance.BuildBarText.text = "В очереди " + ProductQueue.Count;
+        if (p == null)
+        {
+            ProductQueue.Enqueue(products[ID]);
+        }
+        else 
+        {
+            StopAllCoroutines();
+            UIManager.Instance.Message("Исследование уже идёт");
+        }
     }
 }

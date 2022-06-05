@@ -37,7 +37,7 @@ public class Factory_L : Build
         {
             if (select)
             {
-                UIManager.Instance.BuildBar.value = 0;
+                UIManager.Instance.buildBar.value = 0;
                 UIManager.Instance.BuildBarText.text = "";
             }
         }
@@ -56,7 +56,7 @@ public class Factory_L : Build
         if (p != null)
         {
            
-            if (select) { UIManager.Instance.BuildBar.value = (p.ConstructTime - timer) / p.ConstructTime * 100; }
+            if (select) { UIManager.Instance.buildBar.value = (p.ConstructTime - timer) / p.ConstructTime * 100; }
             timer -= Time.deltaTime;
             if (timer <= 1)
             {

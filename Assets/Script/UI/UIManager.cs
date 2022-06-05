@@ -9,6 +9,8 @@ public class UIManager : MonoBehaviour
     public GameObject HpBarGameObject;
     public GameObject FabricPanel;
     public GameObject BuilderPanel;
+    public GameObject FactoryPanel;
+    public GameObject LabPanel;
     public Unit unit=null;
     public Build build=null;
     public Image portretImage;
@@ -16,7 +18,7 @@ public class UIManager : MonoBehaviour
     public float maxValue = 100;
     private static float current;
     public Slider slider;
-    public Slider BuildBar;
+    public Slider buildBar;
     public TextMeshProUGUI HpBar;
     public TextMeshProUGUI messageText;
     public TextMeshProUGUI BuildBarText;
@@ -29,6 +31,7 @@ public class UIManager : MonoBehaviour
     public TextMeshProUGUI description;
     public TextMeshProUGUI money;
     public static UIManager Instance;
+    public LabPanel labpanel;
     [SerializeField] private BuildManager buildManger;
     public static float currentValue
     {
@@ -42,10 +45,9 @@ public class UIManager : MonoBehaviour
         slider.maxValue = maxValue;
         slider.minValue = 0;
         current = maxValue;
-        BuildBar.fillRect.GetComponent<Image>().color = Color.green;
-        BuildBar.maxValue = 100;
-        BuildBar.minValue = 0;
-        // UpdateUI();
+        buildBar.fillRect.GetComponent<Image>().color = Color.green;
+        buildBar.maxValue = 100;
+        buildBar.minValue = 0;
         portretImage.sprite = imageNull;
     }
     //CurrentHealth = MaxHealth;
@@ -115,10 +117,16 @@ public class UIManager : MonoBehaviour
             controllUnit.text = GameStat.playerName;
             controllUnit.color = Color.green;
             if (build.nameUnit=="Завод"&& !build.building)
-            { 
+            {
                 FabricPanel.SetActive(true);
                 Fabrica_M fabrica = build.gameObject.GetComponent<Fabrica_M>();
                 BuildBarText.text = "В очереди " + fabrica.ProductQueue.Count;
+            }
+            if (build.nameUnit == "Лаборатория" && !build.building)
+            {
+                LabPanel.SetActive(true);
+                Laboratory laboratory = build.gameObject.GetComponent<Laboratory>();
+                labpanel.GetLab(laboratory);
             }
         }
         if (build.player == Players.Player2)
@@ -138,6 +146,7 @@ public class UIManager : MonoBehaviour
         HpBarGameObject.SetActive(false);
         FabricPanel.SetActive(false);
         BuilderPanel.SetActive(false);
+        LabPanel.SetActive(false);
         unit = null;
         build = null;
      }
