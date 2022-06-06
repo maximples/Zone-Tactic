@@ -31,7 +31,8 @@ public class UIManager : MonoBehaviour
     public TextMeshProUGUI description;
     public TextMeshProUGUI money;
     public static UIManager Instance;
-    public LabPanel labpanel;
+    public LabPanel labPanel;
+    public FactoryPanel factoryPanel;
     [SerializeField] private BuildManager buildManger;
     public static float currentValue
     {
@@ -119,14 +120,24 @@ public class UIManager : MonoBehaviour
             if (build.nameUnit=="Завод"&& !build.building)
             {
                 FabricPanel.SetActive(true);
+                buildBar.gameObject.SetActive(true);
                 Fabrica_M fabrica = build.gameObject.GetComponent<Fabrica_M>();
                 BuildBarText.text = "В очереди " + fabrica.ProductQueue.Count;
             }
             if (build.nameUnit == "Лаборатория" && !build.building)
             {
                 LabPanel.SetActive(true);
+                buildBar.gameObject.SetActive(true);
                 Laboratory laboratory = build.gameObject.GetComponent<Laboratory>();
-                labpanel.GetLab(laboratory);
+                labPanel.GetLab(laboratory);
+                laboratory.labPanel = labPanel;
+            }
+            if (build.nameUnit == "Завод тяжёлой техники" && !build.building)
+            {
+                FactoryPanel.SetActive(true);
+                buildBar.gameObject.SetActive(true);
+                Factory_L factory_L = build.gameObject.GetComponent<Factory_L>();
+                factoryPanel.GetFactory(factory_L);
             }
         }
         if (build.player == Players.Player2)
@@ -143,10 +154,13 @@ public class UIManager : MonoBehaviour
         HpBar.text = "";
         damag.text = "";
         speed.text = "";
+        BuildBarText.text = "";
         HpBarGameObject.SetActive(false);
         FabricPanel.SetActive(false);
         BuilderPanel.SetActive(false);
         LabPanel.SetActive(false);
+        buildBar.gameObject.SetActive(false);
+        FactoryPanel.SetActive(false);
         unit = null;
         build = null;
      }

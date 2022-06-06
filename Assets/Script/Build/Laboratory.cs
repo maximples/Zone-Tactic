@@ -6,6 +6,7 @@ public class Laboratory : Build
 {
     public Product[] products;
     public Queue<Product> ProductQueue = new Queue<Product>();
+    public LabPanel labPanel;
     private Product p = null;
     private float timer;
    
@@ -51,10 +52,26 @@ public class Laboratory : Build
             timer -= Time.deltaTime;
             if (timer <= 0)
             {
-                if(p.Name== "Системы защиты") { GameStat.player1Technology.towerMulti = true; }
-                if (p.Name == "Ракетные технологии") { GameStat.player1Technology.RSZO = true; }
-                if (p.Name == "Тяжёлая промышленость") { GameStat.player1Technology.heavyFactory = true; }
-                if (p.Name == "Тяжёлый танк") { GameStat.player1Technology.heavyTank = true; }
+                if(p.Name== "Системы защиты") 
+                { 
+                    GameStat.player1Technology.towerMulti = true;
+                    labPanel.botton_0_0.SetActive(false);
+                }
+                if (p.Name == "Ракетные технологии")
+                {
+                    GameStat.player1Technology.RSZO = true;
+                    labPanel.botton_0_1.SetActive(false);
+                }
+                if (p.Name == "Тяжёлая промышленость") 
+                { 
+                    GameStat.player1Technology.heavyFactory = true;
+                    labPanel.botton_0_2.SetActive(false);
+                }
+                if (p.Name == "Тяжёлый танк")
+                { 
+                    GameStat.player1Technology.heavyTank = true;
+                    labPanel.botton_0_3.SetActive(false);
+                }
                 p = null;
             }
         }
@@ -63,12 +80,14 @@ public class Laboratory : Build
     {
         if (p == null)
         {
+            GameStat.player1money -= products[ID].price;
             ProductQueue.Enqueue(products[ID]);
         }
         else 
         {
+            Debug.Log(0);
             StopAllCoroutines();
-            UIManager.Instance.Message("Исследование уже идёт");
+            StartCoroutine(UIManager.Instance.Message("Исследование уже идёт"));
         }
     }
 }

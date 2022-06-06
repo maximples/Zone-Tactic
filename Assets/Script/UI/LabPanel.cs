@@ -8,11 +8,14 @@ public class LabPanel : MonoBehaviour
     public TextMeshProUGUI nameUnitPrefab;
     public TextMeshProUGUI costUnit;
     public TextMeshProUGUI description;
+    public GameObject botton_0_0;
+    public GameObject botton_0_1;
+    public GameObject botton_0_2;
+    public GameObject botton_0_3;
     public void BuilUnitBotton_0_0()
     {
         if (GameStat.player1money >= laboratory.products[0].price)
         {
-            GameStat.player1money -= laboratory.products[0].price;
             laboratory.BuildProduct(0);
         }
         else
@@ -25,7 +28,6 @@ public class LabPanel : MonoBehaviour
     {
         if (GameStat.player1money >= laboratory.products[1].price)
         {
-            GameStat.player1money -= laboratory.products[1].price;
             laboratory.BuildProduct(1);
         }
         else
@@ -36,25 +38,15 @@ public class LabPanel : MonoBehaviour
     }
     public void BuilUnitBotton_0_2()
     {
-        if (GameStat.player1Technology.heavyFactory)
+        if (GameStat.player1money >= laboratory.products[2].price)
         {
-            if (GameStat.player1money >= laboratory.products[2].price)
-            {
-                GameStat.player1money -= laboratory.products[2].price;
-                laboratory.BuildProduct(2);
-            }
-            else
-            {
-                StopAllCoroutines();
-                StartCoroutine(UIManager.Instance.Message("Недостаточно денег"));
-            }
+            laboratory.BuildProduct(2);
         }
         else
         {
             StopAllCoroutines();
-            StartCoroutine(UIManager.Instance.Message("Нужно исследовать тяжёлую промышленность"));
+            StartCoroutine(UIManager.Instance.Message("Недостаточно денег"));
         }
-
     }
     public void BuilUnitBotton_0_3()
     {
@@ -62,7 +54,6 @@ public class LabPanel : MonoBehaviour
         {
             if (GameStat.player1money >= laboratory.products[3].price)
             {
-                GameStat.player1money -= laboratory.products[3].price;
                 laboratory.BuildProduct(3);
             }
             else

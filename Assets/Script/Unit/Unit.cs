@@ -110,11 +110,14 @@ public class Unit : MonoBehaviour, ISelect {
         isBusy = true;
         foreach (Unit unit in unitManager.GetAllUnits(player,Force.Enemies))
         {
-            if (Vector3.SqrMagnitude(unit.gameObject.transform.position - transform.position) < radius * radius)
+            if (unit.live)
             {
-                enemyTarget = unit.gameObject;
-                unit.AgroFindEnemy();
-                break;
+                if (Vector3.SqrMagnitude(unit.gameObject.transform.position - transform.position) < radius * radius)
+                {
+                    enemyTarget = unit.gameObject;
+                    unit.AgroFindEnemy();
+                    break;
+                }
             }
         }
         if (enemyTarget == null)
