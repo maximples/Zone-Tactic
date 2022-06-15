@@ -12,6 +12,7 @@ public class LabPanel : MonoBehaviour
     public GameObject botton_0_1;
     public GameObject botton_0_2;
     public GameObject botton_0_3;
+    public GameObject botton_1_0;
     public void BuilUnitBotton_0_0()
     {
         if (GameStat.player1money >= laboratory.products[0].price)
@@ -68,6 +69,19 @@ public class LabPanel : MonoBehaviour
             StartCoroutine(UIManager.Instance.Message("Нужно исследовать тяжёлую промышленность"));
         }
     }
+    public void BuilUnitBotton_1_0()
+    {
+
+            if (GameStat.player1money >= laboratory.products[4].price)
+            {
+                laboratory.BuildProduct(4);
+            }
+            else
+            {
+                StopAllCoroutines();
+                StartCoroutine(UIManager.Instance.Message("Недостаточно денег"));
+            }
+    }
     public void EnterBotton_0_0()
     {
         nameUnitPrefab.text = laboratory.products[0].Name;
@@ -91,6 +105,12 @@ public class LabPanel : MonoBehaviour
         nameUnitPrefab.text = laboratory.products[3].Name;
         costUnit.text = "Цена:  " + laboratory.products[3].price + " Время: " + laboratory.products[3].ConstructTime;
         description.text = laboratory.products[3].description;
+    }
+    public void EnterBotton_1_0()
+    {
+        nameUnitPrefab.text = laboratory.products[4].Name;
+        costUnit.text = "Цена:  " + laboratory.products[4].price + " Время: " + laboratory.products[4].ConstructTime;
+        description.text = laboratory.products[4].description;
     }
     public void ExiteBotton()
     {

@@ -13,36 +13,42 @@ public class Unit : MonoBehaviour, ISelect {
         MoveFrend,
         Building,
         Repear,
-        AttakTerritory
+        AttakTerritory,
+        Defens
     }
+    public Players player;
+    public TipUnit tipUnit;
+    public string nameUnit;
+    public int MaxHealth = 100;
+    public float CurrentHealth;
     public float attackRadius = 20;
     public float agroRadius = 60;
     public int damag = 3;
     public float speed = 10;
     public Sprite image;
-    public string nameUnit;
-    public int MaxHealth=100;
-    public int CurrentHealth;
-    public TargetPoint Target = null;
-    public Players player;
-    public UnitState state;
-    public bool live = true;
-    [SerializeField] protected GameObject selectionRing;
-    [SerializeField] protected GameObject comandTarget;
-    [SerializeField] protected GameObject turrent;
+    public float buildingTime;
     [SerializeField] protected GameObject destroyEffect;
-    [SerializeField] protected GameObject HpBar;
+    public GameObject maskFog;
+    [HideInInspector] public TargetPoint Target = null;
+    [HideInInspector] public UnitState state;
+    [HideInInspector] public bool live = true;
+    protected GameObject selectionRing;
+    protected GameObject comandTarget;
+    protected GameObject turrent;
+    protected GameObject HpBar;
     protected GameObject cameraMain;
     protected GameObject enemyTarget;
     protected UnitManager unitManager;
     protected float speedFire = 40;
     protected float randTime;
     protected bool isBusy = false;
-    [SerializeField]  protected Vector3 targetPosition;
-    [SerializeField] protected GameObject gun;
+    protected Vector3 targetPosition;
+    protected GameObject gun;
+    protected Vector3 offset=new Vector3(0,1.2f,0);
     protected Vector3 idlePosition;
-    protected UnityEngine.AI.NavMeshAgent _agent;
+    [HideInInspector] public UnityEngine.AI.NavMeshAgent _agent;
     protected int mask;
+    protected GameObject turrentLook;
     public UnityEngine.AI.NavMeshAgent Agent
     {
         get
@@ -183,11 +189,12 @@ public class Unit : MonoBehaviour, ISelect {
             if(this== UIManager.Instance.unit)
             { UIManager.Instance.OnDeselectUnit(); }
             live = false;
-            if (state == UnitState.MoveTarget)
-            {
-                _agent.ResetPath();
-            }
             Instantiate(destroyEffect, turrent.transform.position, turrent.transform.rotation);
+            if (Target != null)
+            {
+                Target.RemoveLink();
+                Target = null;
+            }
             Destroy (gameObject);
         }
     }
@@ -209,6 +216,11 @@ public class Unit : MonoBehaviour, ISelect {
                 comandTarget = commandUnit.gameObject;
                 state = UnitState.MoveFrend;
             }
+            if (Target != null)
+            {
+                Target.RemoveLink();
+                Target = null;
+            }
         }
     }
     public virtual void CommandBuild(Build commandBuild)
@@ -229,6 +241,11 @@ public class Unit : MonoBehaviour, ISelect {
                 comandTarget = commandBuild.gameObject;
                 state = UnitState.MoveFrend;
             }
+            if (Target != null)
+            {
+                Target.RemoveLink();
+                Target = null;
+            }
         }
     }
     public IEnumerator SelectRingFlip(Unit unit)
@@ -248,5 +265,57 @@ public class Unit : MonoBehaviour, ISelect {
         Agent.isStopped = false;
         targetPosition =comandPos;
         state = UnitState.AttakTerritory;
+    }
+    public void OnSetTargetPos(Vector3 target, int num)
+    {
+        if (live)
+        {
+            Agent.isStopped = false;
+            float xOffset = 0;
+            float zOffset = 0;
+            if (num == 2) { xOffset = 5; zOffset = 0; }
+            if (num == 3) { xOffset = -5; zOffset = 0; }
+            if (num == 4) { xOffset = 0; zOffset = -7; }
+            if (num == 5) { xOffset = 5; zOffset = -7; }
+            if (num == 6) { xOffset = -5; zOffset = -7; }
+            if (num == 7) { xOffset = 0; zOffset = 7; }
+            if (num == 8) { xOffset = 5; zOffset = 7; }
+            if (num == 9) { xOffset = -5; zOffset = 7; }
+            if (num == 10) { xOffset = 10; zOffset = 0; }
+            if (num == 11) { xOffset = -10; zOffset = 0; }
+            if (num == 12) { xOffset = 10; zOffset = -7; }
+            if (num == 13) { xOffset = -10; zOffset = -7; }
+            if (num == 14) { xOffset = 10; zOffset = 7; }
+            if (num == 15) { xOffset = 10; zOffset = 7; }
+            state = UnitState.MoveTarget;
+            Vector3 offset = new Vector3(xOffset, 0, zOffset);
+            targetPosition = target + offset;
+        }
+    }
+    public void GetColor()
+    {
+        GetComponent<MeshRenderer>().material = UnitManager.Instance.GetUnitTexture(player);
+        turrent.GetComponent<MeshRenderer>().material = UnitManager.Instance.GetUnitTexture(player);
+        gun.GetComponent<MeshRenderer>().material = UnitManager.Instance.GetUnitTexture(player);
+        if (player == Players.Player1)
+        {
+            offset = new Vector3(0, 1, 0);
+            GameObject marker = Instantiate(UnitManager.Instance.SelectUnitPlayer, transform.position+offset, UnitManager.Instance.SelectUnitPlayer.transform.rotation) as GameObject;
+            marker.transform.parent = transform;
+        }
+        else
+        {
+            offset = new Vector3(0, 1, 0);
+            GameObject marker = Instantiate(UnitManager.Instance.SelectUnitEnemy, transform.position + offset, UnitManager.Instance.SelectUnitEnemy.transform.rotation) as GameObject;
+            marker.transform.parent = transform;
+        }
+    }
+    protected void GetObject()
+    {
+        turrent= transform.Find("Turrent").gameObject;
+        turrentLook = transform.Find("turrentLook").gameObject;
+        HpBar = transform.Find("HpBar").gameObject;
+        gun = turrent.transform.Find("Gun").gameObject;
+        selectionRing = transform.Find("SelectionRing").gameObject;
     }
 }

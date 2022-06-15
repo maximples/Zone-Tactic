@@ -7,25 +7,35 @@ public class Tank_M : Unit
     [SerializeField] private float reloading = 3;
     [SerializeField] private GameObject Fire;
     private bool isReloading = false;
-    public RayTarget rayTarget;
+    private float time = 0;
+    private RayTarget rayTarget;
     void Awake()
     {
         randTime = Random.Range(0, 0.99f);
     }
     void Start()
     {
+        GetObject();
+        rayTarget = gun.GetComponent<RayTarget>();
         idlePosition = transform.position;
         speed = 8;
         speedFire = 40;
         Agent.speed = speed;
         isBusy = false;
         cameraMain = GameObject.Find("Main Camera");
-        unitManager = cameraMain.GetComponent<UnitManager>();
+        unitManager = GameObject.Find("UnitManager").GetComponent<UnitManager>();
         CurrentHealth = MaxHealth;
-        GetComponent<MeshRenderer>().material = UnitManager.Instance.GetUnitTexture(player);
-        turrent.GetComponent<MeshRenderer>().material = UnitManager.Instance.GetUnitTexture(player);
-        gun.GetComponent<MeshRenderer>().material = UnitManager.Instance.GetUnitTexture(player);
-        if (player != Players.Player1) { selectionRing.GetComponent<MeshRenderer>().material.color = Color.red; }
+        GetColor();
+        if (player == Players.Player1)
+        {
+            GameObject mask_ = Instantiate(maskFog, transform.position, transform.rotation) as GameObject;
+            mask_.transform.parent = transform;
+        }
+        if (player != Players.Player1)
+        {
+            Projector myProjector = selectionRing.GetComponent<Projector>();
+            myProjector.material = GameManager.Instance.player2Material;
+        }
         if (player == Players.Player1)
         {
             mask = 191;
@@ -59,6 +69,11 @@ public class Tank_M : Unit
                             {
                                 turrent.transform.Rotate(Vector3.down);
                             }
+                        }
+                        if (Target != null)
+                        {
+                            Target.RemoveLink();
+                            Target = null;
                         }
                     }
                     break;
@@ -95,7 +110,7 @@ public class Tank_M : Unit
                             }
                             if (Vector3.SqrMagnitude(enemyTarget.transform.position - transform.position) < attackRadius * attackRadius)
                             {
-                                turrent.transform.LookAt(enemyTarget.transform.position);
+                                LookTarget(enemyTarget.transform.position);
                                 if (rayTarget.GoodTarget(mask))
                                 {
                                     Agent.isStopped = true;
@@ -120,7 +135,7 @@ public class Tank_M : Unit
                     {
                         if (enemyTarget != null)
                         {
-                            turrent.transform.LookAt(enemyTarget.transform.position);
+                            LookTarget(enemyTarget.transform.position);
                             if (rayTarget.GoodTarget(mask))
                             {
                                 if (!isReloading) { Attack(); }
@@ -174,7 +189,7 @@ public class Tank_M : Unit
 
                             if (enemyTarget != null)
                             {
-                                turrent.transform.LookAt(enemyTarget.transform.position);
+                                LookTarget(enemyTarget.transform.position);
                                 if (rayTarget.GoodTarget(mask))
                                 {
                                     if (!isReloading) { Attack(); }
@@ -240,7 +255,7 @@ public class Tank_M : Unit
                             Agent.SetDestination(comandTarget.transform.position);
                             if (enemyTarget != null)
                             {
-                                turrent.transform.LookAt(enemyTarget.transform.position);
+                                LookTarget(enemyTarget.transform.position);
                                 if (rayTarget.GoodTarget(mask))
                                 {
                                     if (!isReloading) { Attack(); }
@@ -320,7 +335,7 @@ public class Tank_M : Unit
                             }
                             if (Vector3.SqrMagnitude(enemyTarget.transform.position - transform.position) < attackRadius * attackRadius)
                             {
-                                turrent.transform.LookAt(enemyTarget.transform.position);
+                                LookTarget(enemyTarget.transform.position);
                                 if (rayTarget.GoodTarget(mask))
                                 {
                                     Agent.isStopped = true;
@@ -335,13 +350,69 @@ public class Tank_M : Unit
                         }
                     }
                     break;
-        }
+                case UnitState.Defens:
+                    {
+                        if (time <= 0)
+                        { 
+                        if (enemyTarget == null)
+                            {
+                                if (!isBusy)
+                                {
+                                    StartCoroutine(FindEnemy(2, agroRadius));
+                                }
+                            }
+                        if (enemyTarget != null)
+                            {
+                                if (Vector3.SqrMagnitude(enemyTarget.transform.position - transform.position) > agroRadius * agroRadius)
+                                {
+                                    if (!isBusy)
+                                    {
+                                        StartCoroutine(FindEnemy(2, agroRadius));
+                                    }
+                                    if (enemyTarget == null)
+                                    {
+                                        Agent.isStopped = false;
+                                        Agent.SetDestination(idlePosition);
+                                    }
+                                }
+                                if (Vector3.SqrMagnitude(enemyTarget.transform.position - transform.position) > attackRadius * attackRadius)
+                                {
+                                    Agent.isStopped = false;
+                                    Agent.SetDestination(enemyTarget.transform.position);
+                                }
+                                if (Vector3.SqrMagnitude(enemyTarget.transform.position - transform.position) < attackRadius * attackRadius)
+                                {
+                                    LookTarget(enemyTarget.transform.position);
+                                    if (rayTarget.GoodTarget(mask))
+                                    {
+                                        Agent.isStopped = true;
+                                        if (!isReloading) { Attack(); }
+                                    }
+                                    else
+                                    {
+                                        Agent.SetDestination(enemyTarget.transform.position);
+                                    }
+                                }
+                                if (Vector3.SqrMagnitude(idlePosition - transform.position) > agroRadius * agroRadius * 1.4f)
+                                {
+                                    Agent.isStopped = false;
+                                    time = 3;
+                                    Agent.SetDestination(idlePosition);
+                                    break;
+                                }
+                            }
+                        }
+                        else
+                        { time -= Time.deltaTime; }
+                    }
+                    break;
+            }
         }
 
     }
     private void Attack()
     {
-        GameObject fireGun = Instantiate(Fire, turrent.transform.position, turrent.transform.rotation) as GameObject;
+        GameObject fireGun = Instantiate(Fire, gun.transform.position, gun.transform.rotation) as GameObject;
         FireGo fireGo = fireGun.GetComponent<FireGo>();
         fireGo.damag = damag;
         fireGo.speed = speedFire;
@@ -354,5 +425,11 @@ public class Tank_M : Unit
         yield return new WaitForSeconds(reloading);
         isReloading = false;
     }
-
+    public void LookTarget(Vector3 targetPos)
+    {
+        targetPos = targetPos + offset;
+        turrentLook.transform.LookAt(targetPos);
+        turrent.transform.eulerAngles = new Vector3(turrent.transform.eulerAngles.x, turrentLook.transform.eulerAngles.y, turrent.transform.eulerAngles.z);
+        gun.transform.eulerAngles = new Vector3(turrentLook.transform.eulerAngles.x, gun.transform.eulerAngles.y, gun.transform.eulerAngles.z);
+    }
 }

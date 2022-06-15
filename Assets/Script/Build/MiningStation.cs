@@ -13,26 +13,25 @@ public class MiningStation : Build
         if (live)
         {
             BuildManager.Instance.AddBuild(this, player);
+            if (player == Players.Player1)
+            {
+                GameObject mask_ = Instantiate(maskFog, transform.position, transform.rotation) as GameObject;
+                mask_.transform.parent = transform;
+            }
         }
         CurrentHealth = MaxHealth;
-        if (player == Players.Player1)
-        {
-            gameObject.layer = 6;
-        }
-        if (player == Players.Player2)
-        {
-            gameObject.layer = 7;
-        }
-        mesh.GetComponent<MeshRenderer>().material = UnitManager.Instance.GetUnitTexture(player);
+        GetColor();
         Tover.GetComponent<MeshRenderer>().material = UnitManager.Instance.GetUnitTexture(player);
-        if (player != Players.Player1) { selectionRing.GetComponent<MeshRenderer>().material.color = Color.red; }
     }
     private void Update()
     {
-        if (live && !building)
+        if (live && !building&&GameStat.activ)
         {
             Tover.transform.Rotate(Vector3.up * 0.5f);
-            GameStat.player1money = GameStat.player1money + incom * Time.deltaTime;
+            if (player == Players.Player1)
+            {
+                GameStat.player1money = GameStat.player1money + incom * Time.deltaTime;
+            }
         }
     }
     public override void GetDamag(int damag)
@@ -46,7 +45,12 @@ public class MiningStation : Build
             { UIManager.Instance.OnDeselectUnit(); }
             live = false;
             Instantiate(destroyBuild, transform.position, transform.rotation);
+            GameStat.player1Incom -= incom;
             Destroy(gameObject);
         }
+    }
+    public override void OnSetTarget(TargetPoint target, int num)
+    {
+
     }
 }

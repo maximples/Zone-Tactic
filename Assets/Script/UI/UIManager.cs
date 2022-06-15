@@ -51,8 +51,6 @@ public class UIManager : MonoBehaviour
         buildBar.minValue = 0;
         portretImage.sprite = imageNull;
     }
-    //CurrentHealth = MaxHealth;
-    // Update is called once per frame
     public void OnSelectUnit(GameObject selectUnit)
     {
         unit = selectUnit.GetComponent<Unit>();
@@ -67,7 +65,7 @@ public class UIManager : MonoBehaviour
         {
             controllUnit.text = GameStat.playerName;
             controllUnit.color = Color.green;
-            if (unit.nameUnit == "Строитель" && unit.live)
+            if (unit.tipUnit ==TipUnit.Builder && unit.live)
             {
                 BuilderPanel.SetActive(true);
                 builder = unit.gameObject.GetComponent<Builder>();
@@ -81,7 +79,7 @@ public class UIManager : MonoBehaviour
     }
     void Update()
     {
-        money.text = "Деньги "+ Mathf.Round(GameStat.player1money) + "+" + GameStat.player1Incom;
+        money.text = "Деньги "+ Mathf.Round(GameStat.player1money);
         if (unit != null)
         {
                 slider.maxValue = unit.MaxHealth;
@@ -117,14 +115,14 @@ public class UIManager : MonoBehaviour
         {
             controllUnit.text = GameStat.playerName;
             controllUnit.color = Color.green;
-            if (build.nameUnit=="Завод"&& !build.building)
+            if (build.tipBuild==TipBuild.FabricaM&& !build.building)
             {
                 FabricPanel.SetActive(true);
                 buildBar.gameObject.SetActive(true);
                 Fabrica_M fabrica = build.gameObject.GetComponent<Fabrica_M>();
                 BuildBarText.text = "В очереди " + fabrica.ProductQueue.Count;
             }
-            if (build.nameUnit == "Лаборатория" && !build.building)
+            if (build.tipBuild == TipBuild.Labaratori && !build.building)
             {
                 LabPanel.SetActive(true);
                 buildBar.gameObject.SetActive(true);
@@ -132,7 +130,7 @@ public class UIManager : MonoBehaviour
                 labPanel.GetLab(laboratory);
                 laboratory.labPanel = labPanel;
             }
-            if (build.nameUnit == "Завод тяжёлой техники" && !build.building)
+            if (build.tipBuild == TipBuild.FabricaL && !build.building)
             {
                 FactoryPanel.SetActive(true);
                 buildBar.gameObject.SetActive(true);
@@ -155,6 +153,7 @@ public class UIManager : MonoBehaviour
         damag.text = "";
         speed.text = "";
         BuildBarText.text = "";
+        messageText.text = "";
         HpBarGameObject.SetActive(false);
         FabricPanel.SetActive(false);
         BuilderPanel.SetActive(false);
@@ -309,6 +308,68 @@ public class UIManager : MonoBehaviour
             StartCoroutine(Message("Постройте командный центр"));
         }
     }
+    public void BuildBotton_1_0()
+    {
+        if (GameStat.player1money >= buildManger.templates[4].price)
+        {
+            buildManger.buildBuilding(4, builder);
+        }
+        else
+        {
+            StopAllCoroutines();
+            StartCoroutine(Message("Недостаточно денег"));
+        }
+
+    }
+    public void BuildBotton_1_1()
+    {
+        if (GameStat.baseNumberPlaer1 > 0)
+        {
+            if (GameStat.player1money >= buildManger.templates[5].price)
+            {
+                buildManger.buildBuilding(5, builder);
+            }
+            else
+            {
+                StopAllCoroutines();
+                StartCoroutine(Message("Недостаточно денег"));
+            }
+        }
+        else
+        {
+            StopAllCoroutines();
+            StartCoroutine(Message("Постройте командный центр"));
+        }
+    }
+    public void BuildBotton_1_2()
+    {
+        if (GameStat.baseNumberPlaer1 > 0)
+        {
+            if (GameStat.player1Technology.repireTover)
+            {
+                if (GameStat.player1money >= buildManger.templates[6].price)
+                {
+                    buildManger.buildBuilding(6, builder);
+                }
+                else
+                {
+                    StopAllCoroutines();
+                    StartCoroutine(Message("Недостаточно денег"));
+                }
+            }
+            else
+            {
+                StopAllCoroutines();
+                StartCoroutine(Message("Исследуйте технологию ремонт техники"));
+            }
+        }
+        else
+        {
+            StopAllCoroutines();
+            StartCoroutine(Message("Постройте командный центр"));
+        }
+    }
+
     public void BuildBotton_1_3()
     {
         if (GameStat.baseNumberPlaer1 > 0)
@@ -337,19 +398,6 @@ public class UIManager : MonoBehaviour
             StartCoroutine(Message("Постройте командный центр"));
         }
     }
-    public void BuildBotton_1_0()
-    {
-        if (GameStat.player1money >= buildManger.templates[4].price)
-        {
-            buildManger.buildBuilding(4, builder);
-        }
-        else
-        {
-            StopAllCoroutines();
-            StartCoroutine(Message("Недостаточно денег"));
-        }
-
-}
     public void EnterBotton_0_0()
     {
         Fabrica_M fabrica = build.gameObject.GetComponent<Fabrica_M>();
@@ -408,6 +456,18 @@ public class UIManager : MonoBehaviour
         costUnit.text = "Цена:  " + buildManger.templates[4].price + " Время: " + buildManger.templates[4].ConstructTime;
         description.text = buildManger.templates[4].description;
     }
+    public void EnterBottonBuild_1_1()
+    {
+        nameUnitPrefab.text = buildManger.templates[5].Name;
+        costUnit.text = "Цена:  " + buildManger.templates[5].price + " Время: " + buildManger.templates[5].ConstructTime;
+        description.text = buildManger.templates[5].description;
+    }
+    public void EnterBottonBuild_1_2()
+    {
+        nameUnitPrefab.text = buildManger.templates[6].Name;
+        costUnit.text = "Цена:  " + buildManger.templates[6].price + " Время: " + buildManger.templates[6].ConstructTime;
+        description.text = buildManger.templates[6].description;
+    }
     public void EnterBottonBuild_1_3()
     {
         nameUnitPrefab.text = buildManger.templates[7].Name;
@@ -422,6 +482,14 @@ public class UIManager : MonoBehaviour
     }
     public IEnumerator Message(string message)
     {
+        messageText.color = Color.red;
+        messageText.text = message;
+        yield return new WaitForSeconds(3);
+        messageText.text = "";
+    }
+    public IEnumerator MessageGreen(string message)
+    {
+        messageText.color = Color.green;
         messageText.text = message;
         yield return new WaitForSeconds(3);
         messageText.text = "";

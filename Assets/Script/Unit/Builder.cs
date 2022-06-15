@@ -3,21 +3,36 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class Builder : Unit
-{
-    [SerializeField] private Build build;
+{  
+    private Build build;
+    [SerializeField] private ParticleSystem repireEffect;
+    private GameObject repirePos;
+    private GameObject repireTarget;
     private float buildRadius = 23;
+    void Awake()
+    {
+    }
     void Start()
     {
+        GetObject();
+        repirePos = turrent.transform.Find("Pos").gameObject; 
         idlePosition = transform.position;
         Agent.speed = speed;
-        
+        if (player == Players.Player1)
+        {
+            GameObject mask_ = Instantiate(maskFog, transform.position, transform.rotation) as GameObject;
+            mask_.transform.parent = transform;
+        }
         isBusy = false;
         cameraMain = GameObject.Find("Main Camera");
-        unitManager = cameraMain.GetComponent<UnitManager>();
+        unitManager = GameObject.Find("UnitManager").GetComponent<UnitManager>();
         CurrentHealth = MaxHealth;
-        GetComponent<MeshRenderer>().material = UnitManager.Instance.GetUnitTexture(player);
-        turrent.GetComponent<MeshRenderer>().material = UnitManager.Instance.GetUnitTexture(player);
-        if (player != Players.Player1) { selectionRing.GetComponent<MeshRenderer>().material.color = Color.red; }
+        GetColor();
+        if (player != Players.Player1) 
+        {
+            Projector myProjector = selectionRing.GetComponent<Projector>();
+            myProjector.material = GameManager.Instance.player2Material;
+        }
         if (player == Players.Player1)
         {
             gameObject.layer = 6;
@@ -50,6 +65,13 @@ public class Builder : Unit
                                 turrent.transform.Rotate(Vector3.down);
                             }
                         }
+                        if (Target != null)
+                        {
+                            Target.RemoveLink();
+                            Target = null;
+                        }
+                        if(!isBusy)
+                        {StartCoroutine(FindRepire(3, agroRadius)); }
                     }
                     break;
                 case UnitState.MoveTarget:
@@ -131,6 +153,7 @@ public class Builder : Unit
                         if (build.CurrentHealth >= build.MaxHealth)
                         {
                             state = UnitState.Idle;
+                            Agent.ResetPath();
                             Agent.stoppingDistance = 0;
                         }
                     }
@@ -166,6 +189,11 @@ public class Builder : Unit
 
                     }
                     break;
+                case UnitState.AgresivStand:
+                    {
+                        state = UnitState.Idle;
+                    }
+                    break;
             }
         }
 
@@ -184,18 +212,32 @@ public class Builder : Unit
         build.CurrentHealth += build.MaxHealth/ build.buildTime;
         build.transfom = build.transfom + 1.5f / build.buildTime;
         build.transform.localScale = new Vector3(1.5f, build.transfom, 1.5f);
-        if (build.CurrentHealth>= build.MaxHealth)
+        Instantiate(repireEffect, repirePos.transform.position, build.transform.rotation);
+        if (build.CurrentHealth >= build.MaxHealth)
         {
             build.CurrentHealth = build.MaxHealth;
             build.building = false;
-            if (build.nameUnit == "Командный центр")
+            if (player == Players.Player1)
             {
-                MainBase mainBase=build.gameObject.GetComponent<MainBase>();
+                GameObject mask_ = Instantiate(build.maskFog, build.transform.position, build.transform.rotation) as GameObject;
+                mask_.transform.parent = build.transform;
+            }
+            if (build.tipBuild == TipBuild.MainBase)
+            {
+                MainBase mainBase = build.gameObject.GetComponent<MainBase>();
                 mainBase.BaseAdd(mainBase.player);
             }
+            if (build.tipBuild == TipBuild.RepireTover)
+            {
+
+                BoxCollider box = build.GetComponent<BoxCollider>();
+                box.size = new Vector3(3, 5, 3);
+            }
+
             build.transform.localScale = new Vector3(1.5f, 1.5f, 1.5f);
             state = UnitState.Idle;
             Agent.stoppingDistance = 0;
+            Agent.ResetPath();
         }
         yield return new WaitForSeconds(1);
         isBusy = false;
@@ -203,11 +245,11 @@ public class Builder : Unit
     public IEnumerator repearStep()
     {
         isBusy = true;
-        build.CurrentHealth += build.MaxHealth / build.buildTime;
+        build.CurrentHealth = Mathf.Round(build.CurrentHealth+build.MaxHealth / build.buildTime);
+        Instantiate(repireEffect, repirePos.transform.position, build.transform.rotation);
         if (build.CurrentHealth >= build.MaxHealth)
         {
             build.CurrentHealth = build.MaxHealth;
-            build.building = false;
             state = UnitState.Idle;
             Agent.stoppingDistance = 0;
         }
@@ -255,6 +297,33 @@ public class Builder : Unit
                     }
                 }
             }
+            if (Target != null)
+            {
+                Target.RemoveLink();
+                Target = null;
+            }
         }
+    }
+    public IEnumerator FindRepire(float time, float radius)
+    {
+
+        isBusy = true;
+        foreach (Build build_ in BuildManager.Instance.GetAllBuilds(player, Force.Allies))
+        {
+            if (build_.live&&build_.CurrentHealth<build_.MaxHealth&&!build_.building)
+            {
+                if (Vector3.SqrMagnitude(build_.gameObject.transform.position - transform.position) < radius * radius)
+                {
+                    comandTarget = build_.gameObject;
+                    build = build_;
+                    state = UnitState.Repear;
+                    Agent.isStopped = false;
+                    Agent.SetDestination(comandTarget.transform.position);
+                    break;
+                }
+            }
+        }
+        yield return new WaitForSeconds(time + randTime);
+        isBusy = false;
     }
 }

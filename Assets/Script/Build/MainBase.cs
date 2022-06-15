@@ -5,31 +5,27 @@ using UnityEngine;
 public class MainBase : Build
 {
 
-    [SerializeField] private GameObject Radar;
+    [SerializeField] private GameObject radar;
     void Start()
     {
         if (live)
         {
             BuildManager.Instance.AddBuild(this, player);
             BaseAdd(player);
+            if (player == Players.Player1)
+            {
+                GameObject mask_ = Instantiate(maskFog, transform.position, transform.rotation) as GameObject;
+                mask_.transform.parent = transform;
+            }
         }
+        GetColor();
         CurrentHealth = MaxHealth;
-        if (player == Players.Player1)
-        {
-            gameObject.layer = 6;
-        }
-        if (player == Players.Player2)
-        {
-            gameObject.layer = 7;
-        }
-        mesh.GetComponent<MeshRenderer>().material = UnitManager.Instance.GetUnitTexture(player);
-        Radar.GetComponent<MeshRenderer>().material = UnitManager.Instance.GetUnitTexture(player);
-        if (player != Players.Player1) { selectionRing.GetComponent<MeshRenderer>().material.color = Color.red; }
+        radar.GetComponent<MeshRenderer>().material = UnitManager.Instance.GetUnitTexture(player);
     }
     private void Update()
     {
-        if(live&&!building)
-        Radar.transform.Rotate(Vector3.up);
+        if(live&&!building&&GameStat.activ)
+        radar.transform.Rotate(Vector3.up);
     }
     public void BaseAdd(Players controller)
     {
@@ -65,5 +61,9 @@ public class MainBase : Build
             Instantiate(destroyBuild, transform.position, transform.rotation);
             Destroy(gameObject);
         }
+    }
+    public override void OnSetTarget(TargetPoint target, int num)
+    {
+
     }
 }

@@ -12,6 +12,10 @@ public class UnitManager : MonoBehaviour {
     public static UnitManager Instance;
     public Material player1Mat;
     public Material player2Mat;
+    public GameObject SelectUnitPlayer;
+    public GameObject SelectUnitEnemy;
+    public GameObject SelectBuildPlayer;
+    public GameObject SelectBuildEnemy;
     void Awake()
     {
         Instance = this;

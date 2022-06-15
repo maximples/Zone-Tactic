@@ -27,6 +27,7 @@ public class ToverMulti : Build
     private bool isReloading = false;
     private UnitManager unitManager;
     private int mask;
+    public RayTarget rayTarget;
     void Start()
     {
         randTime = Random.Range(0, 0.99f);
@@ -34,22 +35,25 @@ public class ToverMulti : Build
         if (live)
         {
             BuildManager.Instance.AddBuild(this, player);
+            if (player == Players.Player1)
+            {
+                GameObject mask_ = Instantiate(maskFog, transform.position, transform.rotation) as GameObject;
+                mask_.transform.parent = transform;
+            }
         }
+        GetColor();
         isBusy = false;
         cameraMain = GameObject.Find("Main Camera");
-        unitManager = cameraMain.GetComponent<UnitManager>();
+        unitManager = GameObject.Find("UnitManager").GetComponent<UnitManager>();
         CurrentHealth = MaxHealth;
         turrent.GetComponent<MeshRenderer>().material = UnitManager.Instance.GetUnitTexture(player);
-        if (player != Players.Player1) { selectionRing.GetComponent<MeshRenderer>().material.color = Color.red; }
         if (player == Players.Player1)
         {
             mask = 191;
-            gameObject.layer = 6;
         }
         if (player == Players.Player2)
         {
             mask = 127;
-            gameObject.layer = 7;
         }
     }
 
@@ -89,7 +93,12 @@ public class ToverMulti : Build
                         if (enemyTarget != null)
                         {
                             LookTarget(enemyTarget.transform.position);
-                            if (!isReloading && Vector3.SqrMagnitude(enemyTarget.transform.position - transform.position) < attackRadius * attackRadius) { Attack(); }
+                            if (rayTarget.GoodTarget(mask))
+                            {
+
+
+                                if (!isReloading && Vector3.SqrMagnitude(enemyTarget.transform.position - transform.position) < attackRadius * attackRadius) { Attack(); }
+                            }
                             if (Vector3.SqrMagnitude(enemyTarget.transform.position - transform.position) > attackRadius * attackRadius) { enemyTarget = null; }
                         }
                         if (enemyTarget== null)

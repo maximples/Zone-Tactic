@@ -15,64 +15,73 @@ public class Laboratory : Build
         if (live)
         {
             BuildManager.Instance.AddBuild(this, player);
+            if (player == Players.Player1)
+            {
+                GameObject mask_ = Instantiate(maskFog, transform.position, transform.rotation) as GameObject;
+                mask_.transform.parent = transform;
+            }
         }
+        GetColor();
         CurrentHealth = MaxHealth;
-        if (player == Players.Player1)
-        {
-            gameObject.layer = 6;
-        }
-        if (player == Players.Player2)
-        {
-            gameObject.layer = 7;
-        }
-        mesh.GetComponent<MeshRenderer>().material = UnitManager.Instance.GetUnitTexture(player);
-        if (player != Players.Player1) { selectionRing.GetComponent<MeshRenderer>().material.color = Color.red; }
     }
 
     public void Update()
     {
-        if (p == null)
+        if (GameStat.activ)
         {
-            if (select)
+            if (p == null)
             {
-                UIManager.Instance.buildBar.value = 0;
-                UIManager.Instance.BuildBarText.text = "";
-            }
-        }
-        if (p == null && ProductQueue.Count > 0)
-        {
-
-            p = ProductQueue.Dequeue();
-            timer = p.ConstructTime;
-        }
-        if (p != null)
-        {
- 
-            if (select) { UIManager.Instance.buildBar.value = (p.ConstructTime - timer) / p.ConstructTime * 100; }
-            timer -= Time.deltaTime;
-            if (timer <= 0)
-            {
-                if(p.Name== "Системы защиты") 
-                { 
-                    GameStat.player1Technology.towerMulti = true;
-                    labPanel.botton_0_0.SetActive(false);
-                }
-                if (p.Name == "Ракетные технологии")
+                if (select)
                 {
-                    GameStat.player1Technology.RSZO = true;
-                    labPanel.botton_0_1.SetActive(false);
+                    UIManager.Instance.buildBar.value = 0;
+                    UIManager.Instance.BuildBarText.text = "";
                 }
-                if (p.Name == "Тяжёлая промышленость") 
-                { 
-                    GameStat.player1Technology.heavyFactory = true;
-                    labPanel.botton_0_2.SetActive(false);
+            }
+            if (p == null && ProductQueue.Count > 0)
+            {
+
+                p = ProductQueue.Dequeue();
+                timer = p.ConstructTime;
+            }
+            if (p != null)
+            {
+
+                if (select) { UIManager.Instance.buildBar.value = (p.ConstructTime - timer) / p.ConstructTime * 100; }
+                timer -= Time.deltaTime;
+                if (timer <= 0)
+                {
+                    if (p.Name == "Системы защиты")
+                    {
+                        GameStat.player1Technology.towerMulti = true;
+                        labPanel.botton_0_0.SetActive(false);
+                        StartCoroutine(UIManager.Instance.MessageGreen("Исследование завершено"));
+                    }
+                    if (p.Name == "Ракетные технологии")
+                    {
+                        GameStat.player1Technology.RSZO = true;
+                        labPanel.botton_0_1.SetActive(false);
+                        StartCoroutine(UIManager.Instance.MessageGreen("Исследование завершено"));
+                    }
+                    if (p.Name == "Тяжёлая промышленость")
+                    {
+                        GameStat.player1Technology.heavyFactory = true;
+                        labPanel.botton_0_2.SetActive(false);
+                        StartCoroutine(UIManager.Instance.MessageGreen("Исследование завершено"));
+                    }
+                    if (p.Name == "Тяжёлый танк")
+                    {
+                        GameStat.player1Technology.heavyTank = true;
+                        labPanel.botton_0_3.SetActive(false);
+                        StartCoroutine(UIManager.Instance.MessageGreen("Исследование завершено"));
+                    }
+                    if (p.Name == "Ремонт техники")
+                    {
+                        GameStat.player1Technology.repireTover = true;
+                        labPanel.botton_1_0.SetActive(false);
+                        StartCoroutine(UIManager.Instance.MessageGreen("Исследование завершено"));
+                    }
+                    p = null;
                 }
-                if (p.Name == "Тяжёлый танк")
-                { 
-                    GameStat.player1Technology.heavyTank = true;
-                    labPanel.botton_0_3.SetActive(false);
-                }
-                p = null;
             }
         }
     }
@@ -85,9 +94,12 @@ public class Laboratory : Build
         }
         else 
         {
-            Debug.Log(0);
             StopAllCoroutines();
             StartCoroutine(UIManager.Instance.Message("Исследование уже идёт"));
         }
+    }
+    public override void OnSetTarget(TargetPoint target, int num)
+    {
+
     }
 }

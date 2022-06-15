@@ -6,10 +6,10 @@ public class AirUnit : Unit
 {
     public float reloading = 0.8f;
     private bool isReloading = false;
-    public GameObject Fire;
-    public GameObject gunPosition1;
-    public GameObject gunPosition2;
-    public RayTarget rayTarget;
+    private GameObject Fire;
+    private GameObject gunPosition1;
+    private GameObject gunPosition2;
+    private RayTarget rayTarget;
     void Awake()
     {
         randTime = Random.Range(0, 0.99f);

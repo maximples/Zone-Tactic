@@ -36,32 +36,40 @@ public class BuildManager : MonoBehaviour {
     }
     void Update()
     {
-        if (GameStat.actionState == ActionState.Build && ghost != null)
+        if (GameStat.actionState == ActionState.Build && ghost != null&&GameStat.activ)
         {
             ghost.transform.position = CastFromCursor();// new Vector3(0, ghost.transform.localScale.y / 2, 0);
-            if(!ghostComponent.IsClose && Input.GetMouseButtonDown(0) && !EventSystem.current.IsPointerOverGameObject())
+            if( Input.GetMouseButtonDown(0) && !EventSystem.current.IsPointerOverGameObject())
             {
-                GameStat.player1money -= templates[Id].price;
-                GameStat.actionState = ActionState.Free;
-                ghostComponent = ghost.GetComponent<BuildGhost>();
-                ghost.GetComponent<UnityEngine.AI.NavMeshObstacle>().enabled = true;
-                builder.Building(ghost);
-                ghostComponent.goodPos.SetActive(false);
-                MiningStation miningStation;
-                miningStation=ghost.gameObject.GetComponent<MiningStation>();
-                if (miningStation != null)
+                if (!ghostComponent.IsClose)
                 {
-                    miningStation.resursPoint.GetComponent<BoxCollider>().enabled = false;
-                    miningStation.transform.position = miningStation.resursPoint.transform.position;
+                    GameStat.player1money -= templates[Id].price;
+                    GameStat.actionState = ActionState.Free;
+                    ghostComponent = ghost.GetComponent<BuildGhost>();
+                    ghost.GetComponent<UnityEngine.AI.NavMeshObstacle>().enabled = true;
+                    builder.Building(ghost);
+                    ghostComponent.goodPos.SetActive(false);
+                    MiningStation miningStation;
+                    miningStation = ghost.gameObject.GetComponent<MiningStation>();
+                    if (miningStation != null)
+                    {
+                        miningStation.resursPoint.GetComponent<BoxCollider>().enabled = false;
+                        miningStation.transform.position = miningStation.resursPoint.transform.position;
+                    }
+                    Build build = ghost.gameObject.GetComponent<Build>();
+                    build.building = true;
+                    build.live = true;
+                    build.CurrentHealth = 0;
+                    build.transform.localScale = new Vector3(1.5f, 0.1f, 1.5f);
+                    AddBuild(build, Players.Player1);
+                    Destroy(ghostComponent);
+                    ghost = null;
                 }
-                Build build =ghost.gameObject.GetComponent<Build>();
-                build.building = true;
-                build.live = true;
-                build.CurrentHealth = 0;
-                build.transform.localScale = new Vector3(1.5f, 0.001f, 1.5f);
-                AddBuild(build, Players.Player1);
-                Destroy(ghostComponent);
-                ghost = null;
+                else
+                {
+                    StopAllCoroutines();
+                    StartCoroutine(UIManager.Instance.Message("Строительство невозможно"));
+                }
             }
             if (Input.GetMouseButtonDown(1) )
             {

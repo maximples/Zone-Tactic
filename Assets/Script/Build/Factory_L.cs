@@ -7,88 +7,118 @@ public class Factory_L : Build
     public Product[] products;
     public Queue<Product> ProductQueue = new Queue<Product>();
     [SerializeField] private GameObject buildPos;
+    [SerializeField] private GameObject mesh1;
+    [SerializeField] private GameObject mesh2;
     [SerializeField] private GameObject door;
+    [SerializeField] private GameObject door1;
     private Product p = null;
     private float timer;
     private Unit unit;
     private GameObject newUnit;
     private bool open=false;
+    public bool work = false;
+    private bool obstacleYes = false;
+    private UnityEngine.AI.NavMeshObstacle obstacle;
     void Start()
     {
+        open = false;
         if (live)
         {
             BuildManager.Instance.AddBuild(this, player);
+            if (player == Players.Player1)
+            {
+                GameObject mask_ = Instantiate(maskFog, transform.position, transform.rotation) as GameObject;
+                mask_.transform.parent = transform;
+            }
         }
+        GetColor();
         CurrentHealth = MaxHealth;
-        if (player == Players.Player1)
-        {
-            gameObject.layer = 6;
-        }
-        if (player == Players.Player2)
-        {
-            gameObject.layer = 7;
-        }
-        mesh.GetComponent<MeshRenderer>().material = UnitManager.Instance.GetUnitTexture(player);
-        if (player != Players.Player1) { selectionRing.GetComponent<MeshRenderer>().material.color = Color.red; }
+        mesh1.GetComponent<MeshRenderer>().material = UnitManager.Instance.GetUnitTexture(player);
+        mesh2.GetComponent<MeshRenderer>().material = UnitManager.Instance.GetUnitTexture(player);
+        door.GetComponent<MeshRenderer>().material = UnitManager.Instance.GetUnitTexture(player);
+        door1.GetComponent<MeshRenderer>().material = UnitManager.Instance.GetUnitTexture(player);
     }
 
     public void Update()
     {
-        if (p == null)
+        if (GameStat.activ)
         {
-            if (select)
+            if (p == null)
             {
-                UIManager.Instance.buildBar.value = 0;
-                UIManager.Instance.BuildBarText.text = "";
-            }
-        }
-        if (p == null && ProductQueue.Count > 0)
-        {
-            p = ProductQueue.Dequeue();
-            UIManager.Instance.BuildBarText.text = "В очереди " + ProductQueue.Count;
-            timer = p.ConstructTime;
-            newUnit = Instantiate(p.Prefab, buildPos.transform.position, buildPos.transform.rotation) as GameObject;
-            unit = newUnit.GetComponent<Unit>();
-            unit.player = player;
-            newUnit.GetComponent<UnityEngine.AI.NavMeshAgent>().enabled = false;
-            newUnit.GetComponent<Unit>().enabled = false;
-            newUnit.GetComponent<BoxCollider>().enabled = false;
-        }
-        if (p != null)
-        {
-           
-            if (select) { UIManager.Instance.buildBar.value = (p.ConstructTime - timer) / p.ConstructTime * 100; }
-            timer -= Time.deltaTime;
-            if (timer <= 3&&timer>2.2f)
-            {
-                open = true;
-                door.transform.Rotate(Vector3.left * 2);
-            }
-            if (timer <= 2f)
-            {
-                newUnit.transform.Translate(Vector3.forward * Time.deltaTime * 10);
-            }
-            if (timer <= 0)
-            {
-                open = false;
-                newUnit.GetComponent<UnityEngine.AI.NavMeshAgent>().enabled = true;
-                newUnit.GetComponent<Unit>().enabled = true;
-                newUnit.GetComponent<BoxCollider>().enabled = true;
-                if (Target != null)
+                if (select)
                 {
-
-                    unit.OnSetTarget(Target, 1);
+                    UIManager.Instance.buildBar.value = 0;
+                    UIManager.Instance.BuildBarText.text = "";
                 }
-                p = null;
             }
+            if (p == null && ProductQueue.Count > 0)
+            {
+                work = true;
+                p = ProductQueue.Dequeue();
+                if (select && player == Players.Player1)
+                {
+                    UIManager.Instance.BuildBarText.text = "В очереди " + ProductQueue.Count;
+                }
+                timer = p.ConstructTime;
+                newUnit = Instantiate(p.Prefab, buildPos.transform.position, buildPos.transform.rotation) as GameObject;
+                unit = newUnit.GetComponent<Unit>();
+                unit.player = player;
+                if (player == Players.Player2) { unit.GetColor(); }
+                newUnit.GetComponent<UnityEngine.AI.NavMeshAgent>().enabled = false;
+                newUnit.GetComponent<Unit>().enabled = false;
+                newUnit.GetComponent<BoxCollider>().enabled = false;
+            }
+            if (p != null)
+            {
+
+                if (select && player == Players.Player1)
+                {
+                    UIManager.Instance.buildBar.value = (p.ConstructTime - timer) / p.ConstructTime * 100;
+                    UIManager.Instance.BuildBarText.text = "В очереди " + ProductQueue.Count;
+                }
+                timer -= Time.deltaTime;
+                if (timer <= 3 && timer > 2.2f)
+                {
+                    open = true;
+                    door.transform.Rotate(Vector3.left * 1.5f);
+                }
+                if (timer <= 2 && timer > 0)
+                {
+                    if (!obstacleYes)
+                    {
+                        obstacle = newUnit.AddComponent<UnityEngine.AI.NavMeshObstacle>();
+                        obstacleYes = true;
+                    }
+                    newUnit.transform.Translate(Vector3.forward * Time.deltaTime * 10);
+                }
+                if (timer <= 0)
+                {
+                    obstacleYes = false;
+                    Destroy(obstacle);
+                    open = false;
+                    newUnit.GetComponent<UnityEngine.AI.NavMeshAgent>().enabled = true;
+                    newUnit.GetComponent<Unit>().enabled = true;
+                    newUnit.GetComponent<BoxCollider>().enabled = true;
+                    if (Target != null)
+                    {
+
+                        unit.OnSetTarget(Target, 1);
+                    }
+                    work = false;
+                    p = null;
+                }
+            }
+            if (door.transform.eulerAngles.x < 269 || door.transform.eulerAngles.x > 271 && !open && !building) { door.transform.Rotate(Vector3.right * 1.5f); }
         }
-        if (door.transform.eulerAngles.x!=270&&!open) { door.transform.Rotate(Vector3.right * 2);}
     }
     public void BuildProduct(int ID)
     {
         ProductQueue.Enqueue(products[ID]);
-        GameStat.player1money -= products[ID].price;
-        UIManager.Instance.BuildBarText.text = "В очереди " + ProductQueue.Count;
+        if (player == Players.Player1)
+        {
+            GameStat.player1money -= products[ID].price;
+            UIManager.Instance.BuildBarText.text = "В очереди " + ProductQueue.Count;
+        }
     }
     public override void GetDamag(int damag)
     {
