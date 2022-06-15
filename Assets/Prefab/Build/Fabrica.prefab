@@ -378,6 +378,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6ef8441ff269b3547b9ea663f8fd4ba2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  tipBuild: 1
   maskFog: {fileID: 5916041006612737686, guid: 37a4bb75f025e90448f2f7fcb021deb2, type: 3}
   MaxHealth: 450
   CurrentHealth: 0

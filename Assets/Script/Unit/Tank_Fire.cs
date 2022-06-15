@@ -12,10 +12,10 @@ public class Tank_Fire : Unit
     void Awake()
     {
         randTime = Random.Range(0, 0.99f);
+        GetObject();
     }
     void Start()
     {
-        GetObject();
         rayTarget = gun.GetComponent<RayTarget>();
         idlePosition = transform.position;
         speed = 8;

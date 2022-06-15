@@ -11,10 +11,10 @@ public class Builder : Unit
     private float buildRadius = 23;
     void Awake()
     {
+        GetObject();
     }
     void Start()
     {
-        GetObject();
         repirePos = turrent.transform.Find("Pos").gameObject; 
         idlePosition = transform.position;
         Agent.speed = speed;

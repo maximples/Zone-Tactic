@@ -13,10 +13,10 @@ public class Car_S : Unit
     void Awake()
     {
         randTime = Random.Range(0, 0.99f);
+        GetObject();
     }
     void Start()
     {
-        GetObject();
         rayTarget = gun.GetComponent<RayTarget>();
         gunPosition1= gun.transform.Find("gun1").gameObject;
         gunPosition2 = gun.transform.Find("gun2").gameObject;

@@ -13,10 +13,10 @@ public class TankMissile : Unit
     void Awake()
     {
         randTime = Random.Range(0, 0.99f);
+        GetObject();
     }
     void Start()
     {
-        GetObject();
         rayTarget = turrentLook.GetComponent<RayTarget>();
         damag = 30;
         idlePosition = transform.position;
