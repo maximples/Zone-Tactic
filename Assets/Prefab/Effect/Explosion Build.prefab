@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 8862775177896230706}
   - component: {fileID: 8084325218862958148}
   - component: {fileID: 3510024222418370949}
-  m_Layer: 0
+  m_Layer: 2
   m_Name: Smoke2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -4691,7 +4691,7 @@ GameObject:
   - component: {fileID: 6172083464148417870}
   - component: {fileID: 5859091286507865049}
   - component: {fileID: 1510812028157330677}
-  m_Layer: 0
+  m_Layer: 2
   m_Name: Light
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -9443,7 +9443,7 @@ GameObject:
   - component: {fileID: 6380364042650912162}
   - component: {fileID: 2344666824773569510}
   - component: {fileID: 8782786983230195089}
-  m_Layer: 0
+  m_Layer: 2
   m_Name: Smoke
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -14123,7 +14123,7 @@ GameObject:
   - component: {fileID: 1589713628902338143}
   - component: {fileID: 3075732151489395684}
   - component: {fileID: 4120956593312161360}
-  m_Layer: 0
+  m_Layer: 2
   m_Name: Explosion Build
   m_TagString: MissilePlayer
   m_Icon: {fileID: 0}

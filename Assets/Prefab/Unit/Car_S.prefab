@@ -672,12 +672,10 @@ MonoBehaviour:
   Target: {fileID: 0}
   state: 0
   live: 1
+  haveTarget: 0
   _agent: {fileID: 0}
   reloading: 0.8
   Fire: {fileID: 2351223769013996286, guid: ce82826b452450c4cb3c232e16edb71c, type: 3}
-  gunPosition1: {fileID: 823836471989592836}
-  gunPosition2: {fileID: 3073594772542072634}
-  rayTarget: {fileID: 7510454142347715412}
 --- !u!195 &921730689636886889
 NavMeshAgent:
   m_ObjectHideFlags: 0
@@ -697,7 +695,7 @@ NavMeshAgent:
   m_AutoBraking: 1
   m_AutoRepath: 1
   m_Height: 2.05
-  m_BaseOffset: 0
+  m_BaseOffset: -1
   m_WalkableMask: 4294967295
   m_ObstacleAvoidanceType: 4
 --- !u!65 &3047500116498059390

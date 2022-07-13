@@ -26,26 +26,6 @@ public class Tank_Fire : Unit
         unitManager = GameObject.Find("UnitManager").GetComponent<UnitManager>();
         CurrentHealth = MaxHealth;
         GetColor();
-        if (player == Players.Player1)
-        {
-            GameObject mask_ = Instantiate(maskFog, transform.position, transform.rotation) as GameObject;
-            mask_.transform.parent = transform;
-        }
-        if (player != Players.Player1)
-        {
-            Projector myProjector = selectionRing.GetComponent<Projector>();
-            myProjector.material = GameManager.Instance.player2Material;
-        }
-        if (player == Players.Player1)
-        {
-            mask = 191;
-            gameObject.layer = 6;
-        }
-        if (player == Players.Player2)
-        {
-            mask = 127;
-            gameObject.layer = 7;
-        }
         UnitManager.Instance.AddUnit(this, player);
     }
 
@@ -58,18 +38,7 @@ public class Tank_Fire : Unit
 
                 case UnitState.Idle:
                     {
-                        if (turrent.transform.localEulerAngles.y > 2)
-                        {
-
-                            if (turrent.transform.localEulerAngles.y > 180)
-                            {
-                                turrent.transform.Rotate(Vector3.up);
-                            }
-                            else
-                            {
-                                turrent.transform.Rotate(Vector3.down);
-                            }
-                        }
+                        IdleTurrent();
                         if (Target != null)
                         {
                             Target.RemoveLink();
@@ -309,45 +278,7 @@ public class Tank_Fire : Unit
                     break;
                 case UnitState.AttakTerritory:
                     {
-                        if (enemyTarget == null)
-                        {
-                            if (!isBusy)
-                            {
-                                StartCoroutine(FindEnemy(1, agroRadius));
-                            }
-                        }
-                        if (enemyTarget == null)
-                        {
-                            Agent.isStopped = false;
-                            Agent.SetDestination(targetPosition);
-                            break;
-                        }
-                        if (enemyTarget != null)
-                        {
-                            if (Vector3.SqrMagnitude(enemyTarget.transform.position - transform.position) > attackRadius * attackRadius)
-                            {
-                                if (!isBusy)
-                                {
-                                    StartCoroutine(FindEnemy(1, attackRadius));
-                                }
-                                Agent.isStopped = false;
-                                Agent.SetDestination(enemyTarget.transform.position);
-                            }
-                            if (Vector3.SqrMagnitude(enemyTarget.transform.position - transform.position) < attackRadius * attackRadius)
-                            {
-                                LookTarget(enemyTarget.transform.position);
-                                if (rayTarget.GoodTarget(mask))
-                                {
-                                    Agent.isStopped = true;
-                                    if (!isReloading) { Attack(); }
-                                }
-                                else
-                                {
-                                    Agent.SetDestination(enemyTarget.transform.position);
-                                }
-
-                            }
-                        }
+                        AttakTerritory();
                     }
                     break;
             }
@@ -376,5 +307,46 @@ public class Tank_Fire : Unit
         turrent.transform.eulerAngles = new Vector3(turrent.transform.eulerAngles.x, turrentLook.transform.eulerAngles.y, turrent.transform.eulerAngles.z);
         gun.transform.eulerAngles = new Vector3(turrentLook.transform.eulerAngles.x, gun.transform.eulerAngles.y, gun.transform.eulerAngles.z);
     }
-
+    private void AttakTerritory()
+    {
+        if (enemyTarget == null)
+        {
+            if (!isBusy)
+            {
+                StartCoroutine(FindEnemy(1, agroRadius));
+            }
+            if (haveTarget)
+            {
+                haveTarget = false;
+                Agent.isStopped = false;
+                Agent.SetDestination(targetPosition);
+            }
+            IdleTurrent();
+        }
+        if (enemyTarget != null)
+        {
+            if (!haveTarget)
+            {
+                haveTarget = true;
+            }
+            if (Vector3.SqrMagnitude(enemyTarget.transform.position - transform.position) > attackRadius * attackRadius)
+            {
+                if (!isBusy)
+                {
+                    StartCoroutine(FindEnemy(1, attackRadius));
+                }
+                Agent.isStopped = false;
+                Agent.SetDestination(enemyTarget.transform.position);
+            }
+            if (Vector3.SqrMagnitude(enemyTarget.transform.position - transform.position) < attackRadius * attackRadius)
+            {
+                LookTarget(enemyTarget.transform.position);
+                if (rayTarget.GoodTarget(mask))
+                {
+                    Agent.isStopped = true;
+                    if (!isReloading) { Attack(); }
+                }
+            }
+        }
+    }
 }

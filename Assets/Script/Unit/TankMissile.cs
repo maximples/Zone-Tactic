@@ -27,29 +27,10 @@ public class TankMissile : Unit
         cameraMain = GameObject.Find("Main Camera");
         unitManager = GameObject.Find("UnitManager").GetComponent<UnitManager>();
         CurrentHealth = MaxHealth;
-        if (player == Players.Player1)
-        {
-            GameObject mask_ = Instantiate(maskFog, transform.position, transform.rotation) as GameObject;
-            mask_.transform.parent = transform;
-        }
+        GetColor();
         GetComponent<MeshRenderer>().material = UnitManager.Instance.GetUnitTexture(player);
         turrent.GetComponent<MeshRenderer>().material = UnitManager.Instance.GetUnitTexture(player);
         gun.GetComponent<MeshRenderer>().material = UnitManager.Instance.GetUnitTexture(player);
-        if (player != Players.Player1)
-        {
-            Projector myProjector = selectionRing.GetComponent<Projector>();
-            myProjector.material = GameManager.Instance.player2Material;
-        }
-        if (player == Players.Player1)
-        {
-            mask = 191;
-            gameObject.layer = 6;
-        }
-        if (player == Players.Player2)
-        {
-            mask = 127;
-            gameObject.layer = 7;
-        }
         UnitManager.Instance.AddUnit(this, player);
     }
 
@@ -106,11 +87,8 @@ public class TankMissile : Unit
                             }
                             if ( Vector3.SqrMagnitude(enemyTarget.transform.position - transform.position) < attackRadius * attackRadius) 
                             {
-                                if (rayTarget.GoodTarget(mask))
-                                {
                                     Agent.isStopped = true;
                                     if (!isReloading&& Vector3.SqrMagnitude(enemyTarget.transform.position - transform.position) > minAttackRadius * minAttackRadius) { Attack(enemyTarget); }
-                                }
                                 if (Vector3.SqrMagnitude(enemyTarget.transform.position - transform.position) < minAttackRadius * minAttackRadius)
                                 {
                                     Agent.isStopped = false;
@@ -147,17 +125,13 @@ public class TankMissile : Unit
                                 }
                                 if (Vector3.SqrMagnitude(comandTarget.transform.position - transform.position) <= attackRadius * attackRadius)
                                 {
+                                    Agent.isStopped = true;
                                     if (!attak)
                                     {
                                         turrentLook.transform.LookAt(comandTarget.transform.position);
                                         turrent.transform.eulerAngles = new Vector3(turrent.transform.eulerAngles.x, turrentLook.transform.eulerAngles.y, turrent.transform.eulerAngles.z);
-                                    }
-
-                                    if (rayTarget.GoodTarget(mask))
-                                    {
-                                        Agent.isStopped = true;
                                         if (!isReloading && Vector3.SqrMagnitude(comandTarget.transform.position - transform.position) > minAttackRadius * minAttackRadius) { Attack(comandTarget); }
-                                    }
+                                    } 
                                     if (Vector3.SqrMagnitude(comandTarget.transform.position - transform.position) < minAttackRadius * minAttackRadius)
                                     {
                                         Agent.isStopped = false;
@@ -209,15 +183,20 @@ public class TankMissile : Unit
                             {
                                 StartCoroutine(FindEnemy(1, agroRadius));
                             }
-                        }
-                        if (enemyTarget == null)
-                        {
-                            Agent.isStopped = false;
-                            Agent.SetDestination(targetPosition);
-                            break;
+                            if (haveTarget)
+                            {
+                                haveTarget = false;
+                                Agent.isStopped = false;
+                                Agent.SetDestination(targetPosition);
+                            }
+                            IdleTurrent();
                         }
                         if (enemyTarget != null)
                         {
+                            if (!haveTarget)
+                            {
+                                haveTarget = true;
+                            }
                             if (Vector3.SqrMagnitude(enemyTarget.transform.position - transform.position) > attackRadius * attackRadius)
                             {
                                 if (!isBusy)

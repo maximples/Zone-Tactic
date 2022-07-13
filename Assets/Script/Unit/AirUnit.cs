@@ -37,7 +37,7 @@ public class AirUnit : Unit
             gameObject.layer = 7;
         }
         if (player != Players.Player1) { selectionRing.GetComponent<MeshRenderer>().material.color = Color.red; }
-        UnitManager.Instance.AddAirUnit(this, player);
+        //UnitManager.Instance.AddAirUnit(this, player);
     }
 
     void Update()
@@ -368,7 +368,7 @@ public class AirUnit : Unit
         CurrentHealth = CurrentHealth - damag;
         if (CurrentHealth <= 0)
         {
-            unitManager.RemoveAirUnit(this, player);
+            //unitManager.RemoveAirUnit(this, player);
             if (this == UIManager.Instance.unit)
             { UIManager.Instance.OnDeselectUnit(); }
             live = false;

@@ -42,7 +42,8 @@ public enum ActionState
 public enum Players
 {
     Player1,
-    Player2
+    Player2,
+    Player3
 }
 public enum Force
 {

@@ -246,10 +246,10 @@ MonoBehaviour:
   Target: {fileID: 0}
   state: 0
   live: 1
+  haveTarget: 0
   _agent: {fileID: 0}
   reloading: 3
   Fire: {fileID: 3703663172215448843, guid: da45a33850fb3c74788b2aa4667fbba9, type: 3}
-  rayTarget: {fileID: 8216327653146436383}
 --- !u!195 &4588526124042654644
 NavMeshAgent:
   m_ObjectHideFlags: 0
@@ -269,7 +269,7 @@ NavMeshAgent:
   m_AutoBraking: 1
   m_AutoRepath: 1
   m_Height: 3.0916882
-  m_BaseOffset: 0
+  m_BaseOffset: -1
   m_WalkableMask: 4294967295
   m_ObstacleAvoidanceType: 4
 --- !u!65 &4157462540835264540

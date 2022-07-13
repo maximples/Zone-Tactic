@@ -21,21 +21,45 @@ public class FireGo : MonoBehaviour
         if (other.gameObject.transform.tag == "Unit")
         {
             Unit unit = other.GetComponent<Unit>();
-            if (unit.player != playerControl&unit.live)
+            if (playerControl == Players.Player1 || playerControl == Players.Player3)
             {
-                Instantiate(explosion, transform.position, explosion.transform.rotation);
-                unit.GetDamag(damag);
-                Destroy(gameObject);
+                if (unit.player == Players.Player2 & unit.live)
+                {
+                    Instantiate(explosion, transform.position, explosion.transform.rotation);
+                    unit.GetDamag(damag);
+                    Destroy(gameObject);
+                }
+            }
+            if (playerControl == Players.Player2)
+            {
+                if (unit.player == Players.Player1 & unit.live|| unit.player == Players.Player3 & unit.live)
+                {
+                    Instantiate(explosion, transform.position, explosion.transform.rotation);
+                    unit.GetDamag(damag);
+                    Destroy(gameObject);
+                }
             }
         }
         if (other.gameObject.transform.tag == "Build")
         {
             Build build = other.GetComponent<Build>();
-            if (build.player != playerControl & build.live)
+            if (playerControl == Players.Player1 || playerControl == Players.Player3)
             {
-                Instantiate(explosion, transform.position, explosion.transform.rotation);
-                build.GetDamag(damag);
-                Destroy(gameObject);
+                if (build.player == Players.Player2 & build.live)
+                {
+                    Instantiate(explosion, transform.position, explosion.transform.rotation);
+                    build.GetDamag(damag);
+                    Destroy(gameObject);
+                }
+            }
+            if (playerControl == Players.Player2)
+            {
+                if (build.player == Players.Player1 & build.live || build.player == Players.Player3 & build.live)
+                {
+                    Instantiate(explosion, transform.position, explosion.transform.rotation);
+                    build.GetDamag(damag);
+                    Destroy(gameObject);
+                }
             }
         }
         if (other.gameObject.transform.tag == "Ground")

@@ -8,7 +8,7 @@ public class Build : MonoBehaviour, ISelect {
     public float MaxHealth = 100;
     public float CurrentHealth;
     public float buildTime;
-    [HideInInspector] public float transfom = 0;
+    [HideInInspector] public float transfom = 0.5f;
     public string nameUnit;
     [HideInInspector] public bool live = true;
     [HideInInspector] public bool building = false;
@@ -49,6 +49,9 @@ public class Build : MonoBehaviour, ISelect {
     public virtual void GetDamag(int damag)
     {
         CurrentHealth = CurrentHealth - damag;
+        if(player==Players.Player3)
+            if(!AIAllies.instance.defens)
+            { AIAllies.instance.Defens(transform.position); }
         if (CurrentHealth <= 0)
         {
             BuildManager.Instance.RemoveUnit(this, player);
@@ -77,17 +80,25 @@ public class Build : MonoBehaviour, ISelect {
         mesh.GetComponent<MeshRenderer>().material = UnitManager.Instance.GetUnitTexture(player);
         if (player == Players.Player1)
         {
-            GameObject marker = Instantiate(UnitManager.Instance.SelectBuildPlayer, transform.position + offset, UnitManager.Instance.SelectBuildPlayer.transform.rotation) as GameObject;
-            marker.transform.parent = transform;
             gameObject.layer = 6;
+            GameObject marker = Instantiate(UnitManager.Instance.SelectBuildPlayer, transform.position + offset, UnitManager.Instance.SelectUnitPlayer.transform.rotation) as GameObject;
+            marker.transform.parent = transform;
         }
-        else
+        if (player == Players.Player2)
         {
+            gameObject.layer = 7;
             Projector myProjector = selectionRing.GetComponent<Projector>();
             myProjector.material = GameManager.Instance.player2Material;
-            GameObject marker = Instantiate(UnitManager.Instance.SelectBuildEnemy, transform.position + offset, UnitManager.Instance.SelectBuildEnemy.transform.rotation) as GameObject;
+            GameObject marker = Instantiate(UnitManager.Instance.SelectBuildEnemy, transform.position + offset, UnitManager.Instance.SelectUnitEnemy.transform.rotation) as GameObject;
             marker.transform.parent = transform;
-            gameObject.layer = 7;
+        }
+        if (player == Players.Player3)
+        {
+            gameObject.layer = 6;
+            Projector myProjector = selectionRing.GetComponent<Projector>();
+            myProjector.material = GameManager.Instance.player3Material;
+            GameObject marker = Instantiate(UnitManager.Instance.SelectBuildAllies, transform.position + offset, UnitManager.Instance.SelectUnitEnemy.transform.rotation) as GameObject;
+            marker.transform.parent = transform;
         }
     }
 }

@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 3006165036275722977}
   - component: {fileID: 5973294856309766144}
   - component: {fileID: -6403290288969979226}
-  m_Layer: 0
+  m_Layer: 2
   m_Name: MidGun
   m_TagString: Untagged
   m_Icon: {fileID: 0}

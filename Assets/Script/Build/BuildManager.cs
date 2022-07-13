@@ -9,6 +9,8 @@ public class BuildManager : MonoBehaviour {
     public Build SelectBuild;
     private List<Build> BuildsPlayer1;
     private List<Build> BuildsPlayer2;
+    private List<Build> BuildsPlayer3;
+    private List<Build> BuildsAllies;
     private Camera mainCamera;
     private GameObject ghost;
     private BuildGhost ghostComponent;
@@ -21,6 +23,8 @@ public class BuildManager : MonoBehaviour {
         Instance = this;
         BuildsPlayer1 = new List<Build>();
         BuildsPlayer2 = new List<Build>();
+        BuildsPlayer3 = new List<Build>();
+        BuildsAllies = new List<Build>();
         mainCamera = Camera.main;
         
     }
@@ -60,7 +64,8 @@ public class BuildManager : MonoBehaviour {
                     build.building = true;
                     build.live = true;
                     build.CurrentHealth = 0;
-                    build.transform.localScale = new Vector3(1.5f, 0.1f, 1.5f);
+                    build.transfom = 0.2f;
+                    build.transform.localScale = new Vector3(1.5f, 0.2f, 1.5f);
                     AddBuild(build, Players.Player1);
                     Destroy(ghostComponent);
                     ghost = null;
@@ -82,15 +87,32 @@ public class BuildManager : MonoBehaviour {
     }
     public void AddBuild(Build build, Players controller)
     {
-        if (controller == Players.Player1) { BuildsPlayer1.Add(build); }
+        if (controller == Players.Player1)
+        { 
+            BuildsPlayer1.Add(build);
+            BuildsAllies.Add(build);
+        }
         if (controller == Players.Player2) { BuildsPlayer2.Add(build); }
+        if (controller == Players.Player3) 
+        { 
+            BuildsPlayer3.Add(build);
+            BuildsAllies.Add(build);
+        }
     }
 
     public void RemoveUnit(Build build, Players controller)
     {
-        if (controller == Players.Player1) { BuildsPlayer1.Remove(build); }
+        if (controller == Players.Player1)
+        {
+            BuildsPlayer1.Remove(build);
+            BuildsAllies.Remove(build);
+        }
         if (controller == Players.Player2) { BuildsPlayer2.Remove(build); }
-
+        if (controller == Players.Player3)
+        {
+            BuildsPlayer3.Remove(build);
+            BuildsAllies.Remove(build);
+        }
     }
 
     public Build[] GetAllBuilds(Players controller, Force getForce)
@@ -105,6 +127,10 @@ public class BuildManager : MonoBehaviour {
             {
                 return BuildsPlayer2.ToArray();
             }
+            if (controller == Players.Player3)
+            {
+                return BuildsPlayer3.ToArray();
+            }
         }
         if (getForce == Force.Enemies)
         {
@@ -114,7 +140,11 @@ public class BuildManager : MonoBehaviour {
             }
             if (controller == Players.Player2)
             {
-                return BuildsPlayer1.ToArray();
+                return BuildsAllies.ToArray();
+            }
+            if (controller == Players.Player3)
+            {
+                return BuildsPlayer2.ToArray();
             }
         }
         return BuildsPlayer1.ToArray();
@@ -140,10 +170,13 @@ public class BuildManager : MonoBehaviour {
         Ray ray = mainCamera.ScreenPointToRay(Input.mousePosition);
         RaycastHit hit;
         Physics.Raycast(ray, out hit,Mathf.Infinity, layerMask);
-        if (hit.transform.tag == "Ground")
+        if (hit.transform != null)
         {
-            return hit.point;
+            if (hit.transform.tag == "Ground")
+            {
+                return hit.point;
+            }
         }
-        return ghost.transform.position;
+        return new Vector3(0,0,0);
     }
 }

@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 362342838431688225}
   - component: {fileID: 9008670003863955557}
   - component: {fileID: 2625156119003063826}
-  m_Layer: 0
+  m_Layer: 2
   m_Name: Smoke
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -4691,7 +4691,7 @@ GameObject:
   - component: {fileID: 5441223225861246428}
   - component: {fileID: 8584957884704970855}
   - component: {fileID: 7258751047838891475}
-  m_Layer: 0
+  m_Layer: 2
   m_Name: Plazma_Explo
   m_TagString: MissilePlayer
   m_Icon: {fileID: 0}
@@ -4898,7 +4898,7 @@ GameObject:
   - component: {fileID: 5161833200991937595}
   - component: {fileID: 7442583074155452242}
   - component: {fileID: 3038781512009721221}
-  m_Layer: 0
+  m_Layer: 2
   m_Name: colider
   m_TagString: Untagged
   m_Icon: {fileID: 0}

@@ -14,9 +14,11 @@ public class GameManager : MonoBehaviour
     public static GameManager Instance;
     public Material player1Material;
     public Material player2Material;
+    public Material player3Material;
     public GameObject winPanel;
     public GameObject load;
     public GameObject baseEnemy;
+    public bool alliesPassiv=false;
     void Awake()
     {
         Instance = this;
@@ -48,7 +50,11 @@ public class GameManager : MonoBehaviour
         load.SetActive(true);
         SceneManager.LoadScene(1);
     }
-    public void Restart()
+    public void Restart2()
+    {
+        SceneManager.LoadScene(2);
+    }
+    public void Restart1()
     {
         SceneManager.LoadScene(1);
     }

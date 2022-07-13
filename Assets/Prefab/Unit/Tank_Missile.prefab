@@ -229,6 +229,7 @@ MonoBehaviour:
   Target: {fileID: 0}
   state: 0
   live: 1
+  haveTarget: 0
   _agent: {fileID: 0}
   reloading: 12
   minAttackRadius: 35
@@ -265,7 +266,7 @@ NavMeshAgent:
   m_AutoBraking: 1
   m_AutoRepath: 1
   m_Height: 3.0916874
-  m_BaseOffset: 0
+  m_BaseOffset: -1
   m_WalkableMask: 4294967295
   m_ObstacleAvoidanceType: 4
 --- !u!1 &6111927666534266386

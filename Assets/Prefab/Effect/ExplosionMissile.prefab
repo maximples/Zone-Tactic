@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 7207868246095243691}
   - component: {fileID: 6388219718641450000}
   - component: {fileID: 5420123746053511588}
-  m_Layer: 0
+  m_Layer: 2
   m_Name: ExplosionMissile
   m_TagString: MissilePlayer
   m_Icon: {fileID: 0}
@@ -217,7 +217,7 @@ GameObject:
   - component: {fileID: 3063339101154640470}
   - component: {fileID: 5945138440025967634}
   - component: {fileID: 858511727285584485}
-  m_Layer: 0
+  m_Layer: 2
   m_Name: Smoke
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -4898,7 +4898,7 @@ GameObject:
   - component: {fileID: 7504938409437331532}
   - component: {fileID: 5245914654091080485}
   - component: {fileID: 409702108755821042}
-  m_Layer: 0
+  m_Layer: 2
   m_Name: colider
   m_TagString: Untagged
   m_Icon: {fileID: 0}

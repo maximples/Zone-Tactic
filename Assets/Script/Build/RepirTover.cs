@@ -89,7 +89,7 @@ public class RepirTover : Build
     private IEnumerator FindTarget(float time, float radius)
     {
         isBusy = true;
-        foreach (Unit unit in UnitManager.Instance.GetAllUnits(player, Force.Allies))
+        foreach (Unit unit in UnitManager.Instance.GetAllUnitsRepir(player, Force.Allies))
         {
             if (unit.live)
             {
@@ -112,7 +112,7 @@ public class RepirTover : Build
     {
         repire = true;
         Instantiate(repireEffect, repirePos.transform.position, transform.rotation);
-        unitTarget.CurrentHealth =Mathf.Round( unitTarget.CurrentHealth +unitTarget.MaxHealth / (unitTarget.buildingTime*1.5f));
+        unitTarget.CurrentHealth =Mathf.Round( unitTarget.CurrentHealth +unitTarget.MaxHealth / unitTarget.buildingTime);
         if (unitTarget.CurrentHealth >= unitTarget.MaxHealth)
         {
             unitTarget.CurrentHealth = unitTarget.MaxHealth;

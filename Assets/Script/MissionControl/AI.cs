@@ -11,9 +11,9 @@ public class AI : MonoBehaviour
     }
     public Players player;
     public float time = 85;
-    private EnemyState enemyState=EnemyState.Free;
+    public EnemyState enemyState=EnemyState.Free;
     public GameObject mainBase;
-    private GameObject target = null;
+    public GameObject target = null;
     private Fabrica_M fabricaM;
     private Factory_L factoryL;
     public float enemyMoney=10000;
@@ -21,10 +21,10 @@ public class AI : MonoBehaviour
     public float enemyArmy = 0;
     public float enemyStrong = 2;
     private Vector3 basePos;
-    private Vector3 targetPos;
+    public Vector3 targetPos;
     private List<Unit> UnitsAttack;
     private List<Unit> UnitsDefens;
-    private bool start = false;
+    public bool start = false;
     // Start is called before the first frame update
     void Awake()
     {
@@ -33,9 +33,9 @@ public class AI : MonoBehaviour
     }
     void Start()
     {
-        enemyStrong = SaveData.Instance.difficultyLevel;
+       enemyStrong = SaveData.Instance.difficultyLevel;
         start = false;
-        StartCoroutine(Timer());
+        //StartCoroutine(Timer());
         basePos = transform.position;
 
     }
@@ -61,7 +61,7 @@ public class AI : MonoBehaviour
                     break;
                 case EnemyState.Attack:
                     {
-                        if (InitiAttackGroup() <= enemyForce / 2)
+                        if (InitiAttackGroup() <= enemyForce / 3)
                         {
                             enemyState = EnemyState.Free;
                             FullBack();
@@ -88,7 +88,7 @@ public class AI : MonoBehaviour
             iRand = Random.Range(1, 10);
             if (build.live)
             {
-                if (build.nameUnit == "Завод")
+                if (build.tipBuild == TipBuild.FabricaM)
                 {
                     fabricaM = build.gameObject.GetComponent<Fabrica_M>();
 
@@ -146,7 +146,7 @@ public class AI : MonoBehaviour
                         }
                     }
                 }
-                if (build.nameUnit == "Завод тяжёлой техники")
+                if (build.tipBuild == TipBuild.FabricaL)
                 {
                     factoryL = build.gameObject.GetComponent<Factory_L>();
                     if (enemyForce >= 10 && !factoryL.work)
@@ -195,10 +195,10 @@ public class AI : MonoBehaviour
         {
             if (unit.live && unit.state == Unit.UnitState.Idle&&i<enemyForce)
             {
-                if (unit.nameUnit == "Заступник"&&speed>=9) { speed = 9; }
-                if (unit.nameUnit == "Средний танк" && speed >= 8) { speed = 8; }
-                if (unit.nameUnit == "Тяжёлый танк" && speed >= 7) { speed = 7; }
-                if (unit.nameUnit == "РСЗО" && speed >= 6) { speed = 6; }
+                if (unit.tipUnit == TipUnit.TankF&&speed>=9) { speed = 9; }
+                if (unit.tipUnit == TipUnit.TankM && speed >= 8) { speed = 8; }
+                if (unit.tipUnit == TipUnit.TankL && speed >= 7) { speed = 7; }
+                if (unit.tipUnit == TipUnit.TankR && speed >= 6) { speed = 6; }
                 i++;
             }
         }
@@ -231,7 +231,7 @@ public class AI : MonoBehaviour
             if (build.live)
             {
                 target=build.gameObject;
-                targetPos = target.gameObject.transform.position;
+                targetPos = new Vector3 (target.gameObject.transform.position.x,0, target.gameObject.transform.position.z);
                 break;
             }
         }
@@ -242,7 +242,7 @@ public class AI : MonoBehaviour
                 if (unit.live)
                 {
                     target = unit.gameObject;
-                    targetPos = target.gameObject.transform.position;
+                    targetPos = new Vector3(target.gameObject.transform.position.x, 0, target.gameObject.transform.position.z);
                     break;
                 }
             }

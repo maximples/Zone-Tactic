@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 1909964124500444687}
   - component: {fileID: 5676568613347988893}
   - component: {fileID: 8702944767559880667}
-  m_Layer: 0
+  m_Layer: 2
   m_Name: RepireEff
   m_TagString: Untagged
   m_Icon: {fileID: 0}

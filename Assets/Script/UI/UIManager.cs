@@ -76,6 +76,11 @@ public class UIManager : MonoBehaviour
             controllUnit.text = "Враг";
             controllUnit.color = Color.red;
         }
+        if (unit.player == Players.Player3)
+        {
+            controllUnit.text = "Союзник";
+            controllUnit.color = Color.yellow;
+        }
     }
     void Update()
     {
@@ -142,6 +147,11 @@ public class UIManager : MonoBehaviour
         {
             controllUnit.text = "Враг";
             controllUnit.color = Color.red;
+        }
+        if (build.player == Players.Player3)
+        {
+            controllUnit.text = "Союзник";
+            controllUnit.color = Color.yellow;
         }
     }
     public void OnDeselectUnit()

@@ -102,27 +102,27 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8a2a9a63c1d2422489d86cb8cf9c2bea, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  attackRadius: 18
-  agroRadius: 60
-  damag: 12
-  speed: 9
-  image: {fileID: 21300000, guid: ea189aa557d95954c8421f0aeb4ecb37, type: 3}
+  player: 0
+  tipUnit: 5
   nameUnit: "\u0417\u0430\u0441\u0442\u0443\u043F\u043D\u0438\u043A"
   MaxHealth: 850
-  buildingTime: 35
   CurrentHealth: 850
+  attackRadius: 18
+  agroRadius: 60
+  damag: 14
+  speed: 9
+  image: {fileID: 21300000, guid: ea189aa557d95954c8421f0aeb4ecb37, type: 3}
+  buildingTime: 35
+  destroyEffect: {fileID: 4339195770081483237, guid: 037e8de2de8e27d43b1afa553877ffab, type: 3}
+  maskFog: {fileID: 5916041006612737686, guid: 37a4bb75f025e90448f2f7fcb021deb2, type: 3}
   Target: {fileID: 0}
-  player: 0
   state: 0
   live: 1
-  tipUnit: 5
-  destroyEffect: {fileID: 4339195770081483237, guid: 037e8de2de8e27d43b1afa553877ffab, type: 3}
+  haveTarget: 0
   _agent: {fileID: 0}
-  maskFog: {fileID: 5916041006612737686, guid: 37a4bb75f025e90448f2f7fcb021deb2, type: 3}
   reloading: 0.5
   Fire: {fileID: 6303723607118647314, guid: 37bcb5e8d263b9d4db3c75268bf45a0c, type: 3}
   FirePos: {fileID: 7838268706848902950}
-  rayTarget: {fileID: 1813339165186285551}
 --- !u!195 &4558420373748654938
 NavMeshAgent:
   m_ObjectHideFlags: 0
@@ -142,7 +142,7 @@ NavMeshAgent:
   m_AutoBraking: 1
   m_AutoRepath: 1
   m_Height: 4.32
-  m_BaseOffset: 0
+  m_BaseOffset: -1
   m_WalkableMask: 4294967295
   m_ObstacleAvoidanceType: 4
 --- !u!65 &1969643052303408185

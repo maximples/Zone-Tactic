@@ -55,6 +55,10 @@ public class ToverMulti : Build
         {
             mask = 127;
         }
+        if (player == Players.Player3)
+        {
+            mask = 191;
+        }
     }
 
     void Update()

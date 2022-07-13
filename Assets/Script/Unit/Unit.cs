@@ -30,7 +30,7 @@ public class Unit : MonoBehaviour, ISelect {
     [SerializeField] protected GameObject destroyEffect;
     public GameObject maskFog;
     [HideInInspector] public TargetPoint Target = null;
-    [HideInInspector] public UnitState state;
+    public UnitState state;
     [HideInInspector] public bool live = true;
     protected GameObject selectionRing;
     protected GameObject comandTarget;
@@ -42,6 +42,7 @@ public class Unit : MonoBehaviour, ISelect {
     protected float speedFire = 40;
     protected float randTime;
     protected bool isBusy = false;
+    public bool haveTarget=false;
     protected Vector3 targetPosition;
     protected GameObject gun;
     protected Vector3 offset=new Vector3(0,1.2f,0);
@@ -109,6 +110,7 @@ public class Unit : MonoBehaviour, ISelect {
             Target.AddLink();
             Vector3 offset = new Vector3(xOffset, 0, zOffset);
             targetPosition = Target.transform.position + offset;
+            Agent.SetDestination(targetPosition);
         }
     }
     public IEnumerator FindEnemy(float time,float radius)
@@ -152,26 +154,10 @@ public class Unit : MonoBehaviour, ISelect {
                 if (unit.state == UnitState.Idle) { unit.state = UnitState.AgresivStand; }
             }
         }
-        foreach (Unit unit in unitManager.GetAllAirUnits(player, Force.Allies))
-        {
-            if (unit.live)
-            {
-                if (unit.state == UnitState.Idle) { unit.state = UnitState.AgresivStand; }
-            }
-        }
-
-
     }
     public void AgroEnemy()
     {
         foreach (Unit unit in unitManager.GetAllUnits(player, Force.Enemies))
-        {
-            if (unit.live)
-            {
-                if (unit.state == UnitState.Idle) { unit.state = UnitState.AgresivStand; }
-            }
-        }
-        foreach (Unit unit in unitManager.GetAllAirUnits(player, Force.Enemies))
         {
             if (unit.live)
             {
@@ -195,6 +181,7 @@ public class Unit : MonoBehaviour, ISelect {
                 Target.RemoveLink();
                 Target = null;
             }
+            StopAllCoroutines();
             Destroy (gameObject);
         }
     }
@@ -203,14 +190,14 @@ public class Unit : MonoBehaviour, ISelect {
         if (live)
         {
             StartCoroutine(SelectRingFlip(commandUnit));
-            if (commandUnit.player != Players.Player1)
+            if (commandUnit.player == Players.Player2)
             {
                 Agent.isStopped = false;
                 comandTarget = commandUnit.gameObject;
                 state = UnitState.MoveEnemy;
                 AgroEnemy();
             }
-            if (commandUnit.player == Players.Player1)
+            if (commandUnit.player == Players.Player1|| commandUnit.player == Players.Player3)
             {
                 Agent.isStopped = false;
                 comandTarget = commandUnit.gameObject;
@@ -228,14 +215,14 @@ public class Unit : MonoBehaviour, ISelect {
         if (live)
         {
             StartCoroutine(commandBuild.SelectRingFlip(commandBuild));
-            if (commandBuild.player != Players.Player1)
+            if (commandBuild.player == Players.Player2)
             {
                 Agent.isStopped = false;
                 comandTarget = commandBuild.gameObject;
                 state = UnitState.MoveEnemy;
                 AgroEnemy();
             }
-            if (commandBuild.player == Players.Player1)
+            if (commandBuild.player == Players.Player1|| commandBuild.player == Players.Player3)
             {
                 Agent.isStopped = false;
                 comandTarget = commandBuild.gameObject;
@@ -265,6 +252,7 @@ public class Unit : MonoBehaviour, ISelect {
         Agent.isStopped = false;
         targetPosition =comandPos;
         state = UnitState.AttakTerritory;
+        Agent.SetDestination(targetPosition);
     }
     public void OnSetTargetPos(Vector3 target, int num)
     {
@@ -290,6 +278,7 @@ public class Unit : MonoBehaviour, ISelect {
             state = UnitState.MoveTarget;
             Vector3 offset = new Vector3(xOffset, 0, zOffset);
             targetPosition = target + offset;
+            Agent.SetDestination(targetPosition);
         }
     }
     public void GetColor()
@@ -297,17 +286,38 @@ public class Unit : MonoBehaviour, ISelect {
         GetComponent<MeshRenderer>().material = UnitManager.Instance.GetUnitTexture(player);
         turrent.GetComponent<MeshRenderer>().material = UnitManager.Instance.GetUnitTexture(player);
         gun.GetComponent<MeshRenderer>().material = UnitManager.Instance.GetUnitTexture(player);
+        offset = new Vector3(0, 1, 0);
         if (player == Players.Player1)
         {
-            offset = new Vector3(0, 1, 0);
-            GameObject marker = Instantiate(UnitManager.Instance.SelectUnitPlayer, transform.position+offset, UnitManager.Instance.SelectUnitPlayer.transform.rotation) as GameObject;
+            mask = 191;
+            gameObject.layer = 6;
+            GameObject mask_ = Instantiate(maskFog, transform.position, transform.rotation) as GameObject;
+            mask_.transform.parent = transform;
+            GameObject marker = Instantiate(UnitManager.Instance.SelectUnitPlayer, transform.position + offset, UnitManager.Instance.SelectUnitPlayer.transform.rotation) as GameObject;
             marker.transform.parent = transform;
         }
-        else
+        if (player == Players.Player2)
         {
-            offset = new Vector3(0, 1, 0);
+            mask = 127;
+            gameObject.layer = 7;
+            Projector myProjector = selectionRing.GetComponent<Projector>();
+            myProjector.material = GameManager.Instance.player2Material;
             GameObject marker = Instantiate(UnitManager.Instance.SelectUnitEnemy, transform.position + offset, UnitManager.Instance.SelectUnitEnemy.transform.rotation) as GameObject;
             marker.transform.parent = transform;
+        }
+        if (player == Players.Player3)
+        {
+            mask = 191;
+            gameObject.layer = 6;
+            Projector myProjector = selectionRing.GetComponent<Projector>();
+            myProjector.material = GameManager.Instance.player3Material;
+            GameObject marker = Instantiate(UnitManager.Instance.SelectUnitAllies, transform.position + offset, UnitManager.Instance.SelectUnitEnemy.transform.rotation) as GameObject;
+            marker.transform.parent = transform;
+            if(ControlLevel1.Instance.activ==true)
+            {
+                GameObject mask_ = Instantiate(maskFog, transform.position, transform.rotation) as GameObject;
+                mask_.transform.parent = transform;
+            }
         }
     }
     protected void GetObject()
@@ -317,5 +327,29 @@ public class Unit : MonoBehaviour, ISelect {
         HpBar = transform.Find("HpBar").gameObject;
         gun = turrent.transform.Find("Gun").gameObject;
         selectionRing = transform.Find("SelectionRing").gameObject;
+    }
+    public IEnumerator IdleState()
+    {
+        yield return new WaitForSeconds(10);
+        if (live)
+        {
+            idlePosition = transform.position;
+            state = UnitState.Idle;
+        }
+    }
+    protected void IdleTurrent()
+    {
+        if (turrent.transform.localEulerAngles.y > 2)
+        {
+
+            if (turrent.transform.localEulerAngles.y > 180)
+            {
+                turrent.transform.Rotate(Vector3.up);
+            }
+            else
+            {
+                turrent.transform.Rotate(Vector3.down);
+            }
+        }
     }
 }

@@ -641,7 +641,7 @@ NavMeshObstacle:
   m_Enabled: 1
   serializedVersion: 3
   m_Shape: 1
-  m_Extents: {x: 3.65, y: 2.63, z: 5}
+  m_Extents: {x: 1.5, y: 2.63, z: 2.5}
   m_MoveThreshold: 0.1
   m_Carve: 1
   m_CarveOnlyStationary: 1
@@ -659,7 +659,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6ef8441ff269b3547b9ea663f8fd4ba2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  maskFog: {fileID: 0}
+  tipBuild: 1
+  maskFog: {fileID: 5916041006612737686, guid: 37a4bb75f025e90448f2f7fcb021deb2, type: 3}
   MaxHealth: 450
   CurrentHealth: 0
   buildTime: 35

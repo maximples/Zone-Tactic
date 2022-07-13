@@ -18,29 +18,11 @@ public class Builder : Unit
         repirePos = turrent.transform.Find("Pos").gameObject; 
         idlePosition = transform.position;
         Agent.speed = speed;
-        if (player == Players.Player1)
-        {
-            GameObject mask_ = Instantiate(maskFog, transform.position, transform.rotation) as GameObject;
-            mask_.transform.parent = transform;
-        }
         isBusy = false;
         cameraMain = GameObject.Find("Main Camera");
         unitManager = GameObject.Find("UnitManager").GetComponent<UnitManager>();
         CurrentHealth = MaxHealth;
         GetColor();
-        if (player != Players.Player1) 
-        {
-            Projector myProjector = selectionRing.GetComponent<Projector>();
-            myProjector.material = GameManager.Instance.player2Material;
-        }
-        if (player == Players.Player1)
-        {
-            gameObject.layer = 6;
-        }
-        if (player == Players.Player2)
-        {
-            gameObject.layer = 7;
-        }
         UnitManager.Instance.AddUnit(this, player);
     }
 
@@ -194,6 +176,12 @@ public class Builder : Unit
                         state = UnitState.Idle;
                     }
                     break;
+                case UnitState.AttakTerritory:
+                    {
+                        state = UnitState.Idle;
+                        idlePosition = transform.position;
+                    }
+                    break;
             }
         }
 
@@ -204,13 +192,13 @@ public class Builder : Unit
         comandTarget = building;
         build = building.GetComponent<Build>();
         state = UnitState.Building;
-        Agent.stoppingDistance = 14;
     }
     public IEnumerator buildingStep()
     {
         isBusy = true;
+        Agent.isStopped = true;
         build.CurrentHealth += build.MaxHealth/ build.buildTime;
-        build.transfom = build.transfom + 1.5f / build.buildTime;
+        build.transfom = build.transfom + 1.3f / build.buildTime;
         build.transform.localScale = new Vector3(1.5f, build.transfom, 1.5f);
         Instantiate(repireEffect, repirePos.transform.position, build.transform.rotation);
         if (build.CurrentHealth >= build.MaxHealth)
@@ -235,6 +223,7 @@ public class Builder : Unit
             }
 
             build.transform.localScale = new Vector3(1.5f, 1.5f, 1.5f);
+            Agent.isStopped = false;
             state = UnitState.Idle;
             Agent.stoppingDistance = 0;
             Agent.ResetPath();
@@ -245,11 +234,13 @@ public class Builder : Unit
     public IEnumerator repearStep()
     {
         isBusy = true;
+        Agent.isStopped = true;
         build.CurrentHealth = Mathf.Round(build.CurrentHealth+build.MaxHealth / build.buildTime);
         Instantiate(repireEffect, repirePos.transform.position, build.transform.rotation);
         if (build.CurrentHealth >= build.MaxHealth)
         {
             build.CurrentHealth = build.MaxHealth;
+            Agent.isStopped =false;
             state = UnitState.Idle;
             Agent.stoppingDistance = 0;
         }

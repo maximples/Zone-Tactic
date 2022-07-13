@@ -215,6 +215,7 @@ MonoBehaviour:
   Target: {fileID: 0}
   state: 0
   live: 1
+  haveTarget: 0
   _agent: {fileID: 0}
   reloading: 4
   Fire: {fileID: 311416362578500719, guid: cdd10698110d1ac4cabc9315f2fbaf9f, type: 3}
@@ -250,7 +251,7 @@ NavMeshAgent:
   m_AutoBraking: 1
   m_AutoRepath: 1
   m_Height: 3.57
-  m_BaseOffset: 0
+  m_BaseOffset: -1
   m_WalkableMask: 4294967295
   m_ObstacleAvoidanceType: 4
 --- !u!1 &3626107378148965021

@@ -355,23 +355,24 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c14630305ffade14d989c83b13ff2b0d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  attackRadius: 12
+  player: 0
+  tipUnit: 0
+  nameUnit: "\u0421\u0442\u0440\u043E\u0438\u0442\u0435\u043B\u044C"
+  MaxHealth: 120
+  CurrentHealth: 120
+  attackRadius: 10
   agroRadius: 60
   damag: 0
   speed: 10
   image: {fileID: 21300000, guid: 8fcee71c90fcf3843a12b6b2febbeec4, type: 3}
-  nameUnit: "\u0421\u0442\u0440\u043E\u0438\u0442\u0435\u043B\u044C"
-  MaxHealth: 120
   buildingTime: 15
-  CurrentHealth: 120
+  destroyEffect: {fileID: 4339195770081483237, guid: 037e8de2de8e27d43b1afa553877ffab, type: 3}
+  maskFog: {fileID: 5916041006612737686, guid: 37a4bb75f025e90448f2f7fcb021deb2, type: 3}
   Target: {fileID: 0}
-  player: 0
   state: 0
   live: 1
-  tipUnit: 0
-  destroyEffect: {fileID: 4339195770081483237, guid: 037e8de2de8e27d43b1afa553877ffab, type: 3}
+  haveTarget: 0
   _agent: {fileID: 0}
-  maskFog: {fileID: 5916041006612737686, guid: 37a4bb75f025e90448f2f7fcb021deb2, type: 3}
   repireEffect: {fileID: 1909964124500492207, guid: b31c10c2aa1027c4d9aa45325715e2b1, type: 3}
 --- !u!65 &506106406207679515
 BoxCollider:
@@ -405,7 +406,7 @@ NavMeshAgent:
   m_AutoBraking: 1
   m_AutoRepath: 1
   m_Height: 4.82
-  m_BaseOffset: 0
+  m_BaseOffset: -1
   m_WalkableMask: 4294967295
   m_ObstacleAvoidanceType: 4
 --- !u!1 &4798115225713107382

@@ -91,6 +91,11 @@ public class ObjectSelect : MonoBehaviour {
                             selectEnemy = true;
                             unitManager.SelectUnit.OnSelect(1);
                         }
+                        if (unitManager.SelectUnit.player == Players.Player3)
+                        {
+                            selectEnemy = true;
+                            unitManager.SelectUnit.OnSelect(1);
+                        }
                         selectDoubl = true;
                     }
                     if (hit.transform.tag == "Build")

@@ -19,18 +19,39 @@ public class FireDamag : MonoBehaviour
     {
         if (other.gameObject.transform.tag == "Unit")
         {
-            Unit unit = other.GetComponent<Unit>();
-            if (unit.player != playerControl & unit.live)
+            if (playerControl == Players.Player1 || playerControl == Players.Player3)
             {
-                unit.GetDamag(damag);
+                Unit unit = other.GetComponent<Unit>();
+                if (unit.player == Players.Player2 & unit.live)
+                {
+                    unit.GetDamag(damag);
+                }
+            }
+            if (playerControl == Players.Player2)
+            {
+                Unit unit = other.GetComponent<Unit>();
+                if (unit.player != Players.Player2 & unit.live)
+                {
+                    unit.GetDamag(damag);
+                }
             }
         }
         if (other.gameObject.transform.tag == "Build")
         {
             Build build = other.GetComponent<Build>();
-            if (build.player != playerControl & build.live)
+            if (playerControl == Players.Player1 || playerControl == Players.Player3)
             {
-                build.GetDamag(damag);
+                if (build.player == Players.Player2 & build.live)
+                {
+                    build.GetDamag(damag);
+                }
+            }
+            if (playerControl == Players.Player2)
+            {
+                if (build.player != Players.Player2 & build.live)
+                {
+                    build.GetDamag(damag);
+                }
             }
         }
     }

@@ -5,7 +5,7 @@ using UnityEngine;
 public class Car_S : Unit
 {
     public float reloading = 0.8f;
-    private bool isReloading =false;
+    private bool isReloading = false;
     public GameObject Fire;
     private GameObject gunPosition1;
     private GameObject gunPosition2;
@@ -18,7 +18,7 @@ public class Car_S : Unit
     void Start()
     {
         rayTarget = gun.GetComponent<RayTarget>();
-        gunPosition1= gun.transform.Find("gun1").gameObject;
+        gunPosition1 = gun.transform.Find("gun1").gameObject;
         gunPosition2 = gun.transform.Find("gun2").gameObject;
         damag = 3;
         idlePosition = transform.position;
@@ -30,26 +30,6 @@ public class Car_S : Unit
         unitManager = GameObject.Find("UnitManager").GetComponent<UnitManager>();
         CurrentHealth = MaxHealth;
         GetColor();
-        if (player == Players.Player1)
-        {
-            mask = 191;
-            gameObject.layer = 6;
-        }
-        if (player == Players.Player2)
-        {
-            mask = 127;
-            gameObject.layer = 7;
-        }
-        if (player != Players.Player1)
-        {
-            Projector myProjector = selectionRing.GetComponent<Projector>();
-            myProjector.material = GameManager.Instance.player2Material;
-        }
-        if (player == Players.Player1)
-        {
-            GameObject mask_ = Instantiate(maskFog, transform.position, transform.rotation) as GameObject;
-            mask_.transform.parent = transform;
-        }
         UnitManager.Instance.AddUnit(this, player);
     }
 
@@ -62,18 +42,7 @@ public class Car_S : Unit
 
                 case UnitState.Idle:
                     {
-                        if (turrent.transform.localEulerAngles.y > 2)
-                        {
-
-                            if (turrent.transform.localEulerAngles.y > 180)
-                            {
-                                turrent.transform.Rotate(Vector3.up);
-                            }
-                            else
-                            {
-                                turrent.transform.Rotate(Vector3.down);
-                            }
-                        }
+                        IdleTurrent();
                         if (Target != null)
                         {
                             Target.RemoveLink();
@@ -315,45 +284,7 @@ public class Car_S : Unit
                     break;
                 case UnitState.AttakTerritory:
                     {
-                        if (enemyTarget == null)
-                        {
-                            if (!isBusy)
-                            {
-                                StartCoroutine(FindEnemy(1, agroRadius));
-                            }
-                        }
-                        if (enemyTarget == null)
-                        {
-                            Agent.isStopped = false;
-                            Agent.SetDestination(targetPosition);
-                            break;
-                        }
-                        if (enemyTarget != null)
-                        {
-                            if (Vector3.SqrMagnitude(enemyTarget.transform.position - transform.position) > attackRadius * attackRadius)
-                            {
-                                if (!isBusy)
-                                {
-                                    StartCoroutine(FindEnemy(1, attackRadius));
-                                }
-                                Agent.isStopped = false;
-                                Agent.SetDestination(enemyTarget.transform.position);
-                            }
-                            if (Vector3.SqrMagnitude(enemyTarget.transform.position - transform.position) < attackRadius * attackRadius)
-                            {
-                                LookTarget(enemyTarget.transform.position);
-                                if (rayTarget.GoodTarget(mask))
-                                {
-                                    Agent.isStopped = true;
-                                    if (!isReloading) { Attack(); }
-                                }
-                                else
-                                {
-                                    Agent.SetDestination(enemyTarget.transform.position);
-                                }
-
-                            }
-                        }
+                        AttakTerritory();
                     }
                     break;
                 case UnitState.Defens:
@@ -436,5 +367,47 @@ public class Car_S : Unit
         turrentLook.transform.LookAt(targetPos);
         turrent.transform.eulerAngles = new Vector3(turrent.transform.eulerAngles.x, turrentLook.transform.eulerAngles.y, turrent.transform.eulerAngles.z);
         gun.transform.eulerAngles = new Vector3(turrentLook.transform.eulerAngles.x, gun.transform.eulerAngles.y, gun.transform.eulerAngles.z);
+    }
+    private void AttakTerritory()
+    {
+        if (enemyTarget == null)
+        {
+            if (!isBusy)
+            {
+                StartCoroutine(FindEnemy(1, agroRadius));
+            }
+            if (haveTarget)
+            {
+                haveTarget = false;
+                Agent.isStopped = false;
+                Agent.SetDestination(targetPosition);
+            }
+            IdleTurrent();
+        }
+        if (enemyTarget != null)
+        {
+            if (!haveTarget)
+            {
+                haveTarget = true;
+            }
+            if (Vector3.SqrMagnitude(enemyTarget.transform.position - transform.position) > attackRadius * attackRadius)
+            {
+                if (!isBusy)
+                {
+                    StartCoroutine(FindEnemy(1, attackRadius));
+                }
+                Agent.isStopped = false;
+                Agent.SetDestination(enemyTarget.transform.position);
+            }
+            if (Vector3.SqrMagnitude(enemyTarget.transform.position - transform.position) < attackRadius * attackRadius)
+            {
+                LookTarget(enemyTarget.transform.position);
+                if (rayTarget.GoodTarget(mask))
+                {
+                    Agent.isStopped = true;
+                    if (!isReloading) { Attack(); }
+                }
+            }
+        }
     }
 }

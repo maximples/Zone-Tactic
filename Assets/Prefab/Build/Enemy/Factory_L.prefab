@@ -66,7 +66,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3f92821f4b5b1844982f06e9b9150f4a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  maskFog: {fileID: 0}
+  tipBuild: 2
+  maskFog: {fileID: 5916041006612737686, guid: 37a4bb75f025e90448f2f7fcb021deb2, type: 3}
   MaxHealth: 600
   CurrentHealth: 0
   buildTime: 25
@@ -128,7 +129,7 @@ NavMeshObstacle:
   m_Enabled: 1
   serializedVersion: 3
   m_Shape: 1
-  m_Extents: {x: 5, y: 4, z: 7.5}
+  m_Extents: {x: 2.5, y: 4, z: 3.5}
   m_MoveThreshold: 0.1
   m_Carve: 1
   m_CarveOnlyStationary: 1
